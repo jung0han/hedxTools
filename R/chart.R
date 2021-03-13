@@ -164,20 +164,20 @@ makeFieldChart <- function(
   }
 
   # each series Chart ----
-  dxChart <- highchart() %>%
-    hc_chart(plotBorderWidth = 1) %>%
-    hc_yAxis_multiples(
+  dxChart <- highcharter::highchart() %>%
+    highcharter::hc_chart(plotBorderWidth = 1) %>%
+    highcharter::hc_yAxis_multiples(
     list(title = list(text = "FFR(%)"), min=0, max=y_max, tickInterval = tickIntervalY, endOnTick=FALSE, gridLineColor=""),
     list(title = list(text = "FDR(%)"), min=0, max=y_max, endOnTick=FALSE, gridLineColor="", showLastLabel = FALSE, opposite = TRUE)
   ) %>%
-    hc_xAxis(
+    highcharter::hc_xAxis(
       minPadding = xLeftMargin,
       type = xType,
       showFirstLabel = FALSE,
       tickInterval = tickIntervalX,
       labels = list(format = "{value:%b}")
       ) %>%
-    hc_plotOptions(
+    highcharter::hc_plotOptions(
       series = list(
         dataLabels = list(
           enabled = useDatalabels,
@@ -188,12 +188,12 @@ makeFieldChart <- function(
         lineWidth = lineWidth
       )
     ) %>% # dataLabels 전역 설정
-    hc_tooltip(
+    highcharter::hc_tooltip(
       crosshairs = TRUE,
       sort = TRUE,
       table = TRUE
     ) %>%
-    hc_title(
+    highcharter::hc_title(
       text = paste0("<span style='color:",
                     ffr_signal,
                     ";'>●</span> ",
@@ -201,7 +201,7 @@ makeFieldChart <- function(
       margin = 10, align = "center",
       style = list(fontFamily = fontFamily, fontWeight = titleFontWeight, useHTML = TRUE, fontSize = titleFontSize)
     ) %>%
-    hc_annotations(
+    highcharter::hc_annotations(
       list(
         draggable = TRUE,
         labelOptions = list(
@@ -254,7 +254,7 @@ makeFieldChart <- function(
 
   for(group in label_df$label_text) {
     dxChart <- dxChart %>%
-      hc_add_series(data = df_group[[group]],
+      highcharter::hc_add_series(data = df_group[[group]],
                     name = group,
                     hcaes(x = PURC_MON_NEW, y = value),
                     marker = list(symbol = label_df[label_df$label_text == group,][['line_symbols']], fillColor=label_df[label_df$label_text == group,][['line_symbols_color']], lineWidth=1, lineColor=NULL),
