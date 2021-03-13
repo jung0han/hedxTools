@@ -6,9 +6,9 @@
 \usage{
 makeFieldChart(
   wd = getwd(),
-  df = read.csv("./data/sample.csv", header = T),
-  xColumn = "value",
-  yColumn = "PURC_MON_NEW",
+  df = dxChart::ffr_fdr_sample,
+  yCol = "value",
+  xCol = "PURC_MON_NEW",
   xType = "datatime",
   xLeftMargin = 0.15,
   yMaxRate = 1.4,
@@ -38,9 +38,9 @@ makeFieldChart(
 
 \item{df}{데이터프레임(group, x축 좌표(문자), y축 좌표(숫자), 기본값 = read.csv("./data/sample.csv", header = T)}
 
-\item{xColumn}{x축 좌표가 위치한 행, 기본값 = "value"}
+\item{yCol}{y축 좌표가 위치한 행, 기본값 = "value"}
 
-\item{yColumn}{y축 좌표가 위한 행, 기본값 = "PURC_MON_NEW"}
+\item{xCol}{x축 좌표가 위한 행, 기본값 = "PURC_MON_NEW"}
 
 \item{xType}{x축의 타입 : "datetime" 또는 "category", 기본값 = "datatime"}
 
