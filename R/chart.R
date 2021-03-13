@@ -140,7 +140,7 @@ makeFieldChart <- function(
 
   for(group in unique_group) {
     label_text <- c(label_text, as.character(df_group[[group]][["group"]][1]))
-    label_y <- c(label_y, df_group[[group]][["value"]][1])
+    label_y <- c(label_y, df_group[[group]][["yCol"]][1])
   }
 
   label_df <- data.frame(label_text, label_y, label_signal, label_signal_symbol, group_colors, use_datalabels, line_symbols, line_symbols_color)
@@ -169,8 +169,8 @@ makeFieldChart <- function(
   dxChart <- highcharter::highchart() %>%
     highcharter::hc_chart(plotBorderWidth = 1) %>%
     highcharter::hc_yAxis_multiples(
-    list(title = list(text = yLeftText), min=0, max=y_max, tickInterval = tickIntervalY, endOnTick=FALSE, gridLineColor=""),
-    list(title = list(text = yRightText), min=0, max=y_max, endOnTick=FALSE, gridLineColor="", showLastLabel = FALSE, opposite = TRUE)
+    list(title = list(text = "FFR(%)"), min=0, max=y_max, tickInterval = tickIntervalY, endOnTick=FALSE, gridLineColor=""),
+    list(title = list(text = "FDR(%)"), min=0, max=y_max, endOnTick=FALSE, gridLineColor="", showLastLabel = FALSE, opposite = TRUE)
   ) %>%
     highcharter::hc_xAxis(
       minPadding = xLeftMargin,
