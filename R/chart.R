@@ -4,8 +4,8 @@
 #'
 #' @param wd 작업 디렉토리, 기본값 = getwd()
 #' @param df 데이터프레임(group, x축 좌표(문자), y축 좌표(숫자), 기본값 = read.csv("./data/sample.csv", header = T)
-#' @param xColumn x축 좌표가 위치한 행, 기본값 = "value"
-#' @param yColumn y축 좌표가 위한 행, 기본값 = "PURC_MON_NEW"
+#' @param yCol y축 좌표가 위치한 행, 기본값 = "value"
+#' @param xCol x축 좌표가 위한 행, 기본값 = "PURC_MON_NEW"
 #' @param xType x축의 타입 : "datetime" 또는 "category", 기본값 = "datatime"
 #' @param xLeftMargin x축 좌측의 여백값으로 타입에 따라 값을 변경 해야함, 기본값 = 0.15
 #' @param yMaxRate y축 좌표의 최대값 대비 y축의 최대값 비율, 기본값 = 1.4
@@ -39,8 +39,8 @@
 makeFieldChart <- function(
   wd = getwd(),
   df = dxChart::ffr_fdr_sample,
-  xColumn = "value",
-  yColumn = "PURC_MON_NEW",
+  yCol = "value",
+  xCol = "PURC_MON_NEW",
   xType = "datatime",
   xLeftMargin = 0.15,
   yMaxRate = 1.4,
@@ -101,8 +101,8 @@ makeFieldChart <- function(
   setwd(wd)
 
   # x 좌표는 소수점 2째자리로 반올림, y좌표는 datatime으로 변경
-  df[xColumn] <- round(df[xColumn], digit=2)
-  df[yColumn] <- as.Date(paste0(df[[yColumn]],1),"%Y%m%d")
+  df[yCol] <- round(df[yCol], digit=2)
+  df[xCol] <- as.Date(paste0(df[[xCol]],1),"%Y%m%d")
 
   # group별로 df를 분리 해주고 정렬
   df_group <- split(df, df$group)
@@ -118,8 +118,8 @@ makeFieldChart <- function(
     )
 
   #
-  label_x <- highcharter::datetime_to_timestamp(df[[yColumn]][1])
-  top_label_x <- highcharter::datetime_to_timestamp(df[[yColumn]][length(df[[yColumn]])])
+  label_x <- highcharter::datetime_to_timestamp(df[[xCol]][1])
+  top_label_x <- highcharter::datetime_to_timestamp(df[[xCol]][length(df[[xCol]])])
   label_y <- c()
   label_text <- c()
   # group 시그널 변수, 계산식 추가 필요!
@@ -256,7 +256,7 @@ makeFieldChart <- function(
     dxChart <- dxChart %>%
       highcharter::hc_add_series(data = df_group[[group]],
                     name = group,
-                    hcaes(x = PURC_MON_NEW, y = value),
+                    highcharter::hcaes(x = xCol, y = yCol),
                     marker = list(symbol = label_df[label_df$label_text == group,][['line_symbols']], fillColor=label_df[label_df$label_text == group,][['line_symbols_color']], lineWidth=1, lineColor=NULL),
                     dataLabels = list(enabled = label_df[label_df$label_text == group,][['use_datalabels']],
                                       color = label_df[label_df$label_text == group,][['group_colors']]),
