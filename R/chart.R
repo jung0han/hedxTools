@@ -31,7 +31,7 @@
 #' @return base64 문자열 또는 htmlwidget object.
 #'
 #' @rdname makeFieldChart
-#' @importFrom dplyr
+#' @import dplyr
 #' @export
 
 # 컬럼 정의 ----

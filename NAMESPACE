@@ -2,4 +2,4 @@
 
 export(base64ToHtml)
 export(makeFieldChart)
-importFrom(dplyr)
+import(dplyr)
