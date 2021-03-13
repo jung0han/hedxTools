@@ -1,0 +1,6 @@
+"","label_text","label_y","label_signal","label_signal_symbol","group_colors","use_datalabels","line_symbols","line_symbols_color"
+"1",1,1.43674663151954,"red","","#000000",TRUE,"circle","white"
+"2",2,1.13795848774214,"green","","#FF0000",TRUE,"circle",""
+"3",3,0.150758588636974,"blue","●","#FF00FF",TRUE,"diamond",""
+"4",4,0.19113127023016,"green","","#7F7F7F",FALSE,"diamond",""
+"5",5,0.318444012044837,"red","●","#FFC000",TRUE,"square","white"
