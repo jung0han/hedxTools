@@ -284,6 +284,16 @@ makeFieldChart <- function(
 
 }
 
+#' Base64 str to Html page
+#'
+#' base64 문자열을 html 페이지로 띄워서 보기 위한 함수
+#'
+#' @param base64Chart Base64 문자열
+#' 
+#' @return Html page.
+#' @rdname base64ToHtml
+#' @export
+
 base64ToHtml <- function(base64Chart = makeFieldChart()) {
   base64 <- base64Chart
   html <- sprintf('<html><body><img src="data:image/png;base64,%s"></body></html>', base64)
