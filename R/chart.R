@@ -38,7 +38,7 @@
 # 컬럼 정의 ----
 makeFieldChart <- function(
   wd = getwd(),
-  df = data("ffr_fdr_sample"),
+  df = dxChart::ffr_fdr_sample,
   xColumn = "value",
   yColumn = "PURC_MON_NEW",
   xType = "datatime",
