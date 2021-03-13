@@ -31,9 +31,8 @@
 #' @return base64 문자열 또는 htmlwidget object.
 #'
 #' @rdname makeFieldChart
+#' @importFrom dplyr
 #' @export
-
-# library("highcharter", "stringr", "webshot", "RCurl")
 
 # 컬럼 정의 ----
 makeFieldChart <- function(
