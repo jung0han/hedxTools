@@ -167,8 +167,8 @@ makeFieldChart <- function(
   dxChart <- highcharter::highchart() %>%
     highcharter::hc_chart(plotBorderWidth = 1) %>%
     highcharter::hc_yAxis_multiples(
-    list(title = list(text = "FFR(%)"), min=0, max=y_max, tickInterval = tickIntervalY, endOnTick=FALSE, gridLineColor=""),
-    list(title = list(text = "FDR(%)"), min=0, max=y_max, endOnTick=FALSE, gridLineColor="", showLastLabel = FALSE, opposite = TRUE)
+    list(title = list(text = yLeftText), min=0, max=y_max, tickInterval = tickIntervalY, endOnTick=FALSE, gridLineColor=""),
+    list(title = list(text = yRightText), min=0, max=y_max, endOnTick=FALSE, gridLineColor="", showLastLabel = FALSE, opposite = TRUE)
   ) %>%
     highcharter::hc_xAxis(
       minPadding = xLeftMargin,
