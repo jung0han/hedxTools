@@ -99,10 +99,12 @@ makeFieldChart <- function(
   # =======================================================
 
   setwd(wd)
+  names(df)[names(df) == yCol] <- "yCol"
+  names(df)[names(df) == xCol] <- "xCol"
 
   # x 좌표는 소수점 2째자리로 반올림, y좌표는 datatime으로 변경
-  df[yCol] <- round(df[yCol], digit=2)
-  df[xCol] <- as.Date(paste0(df[[xCol]],1),"%Y%m%d")
+  df["yCol"] <- round(df["yCol"], digit=2)
+  df["xCol"] <- as.Date(paste0(df[["xCol"]],1),"%Y%m%d")
 
   # group별로 df를 분리 해주고 정렬
   df_group <- split(df, df$group)
@@ -118,8 +120,8 @@ makeFieldChart <- function(
     )
 
   #
-  label_x <- highcharter::datetime_to_timestamp(df[[xCol]][1])
-  top_label_x <- highcharter::datetime_to_timestamp(df[[xCol]][length(df[[xCol]])])
+  label_x <- highcharter::datetime_to_timestamp(df[["xCol"]][1])
+  top_label_x <- highcharter::datetime_to_timestamp(df[["xCol"]][length(df[["xCol"]])])
   label_y <- c()
   label_text <- c()
   # group 시그널 변수, 계산식 추가 필요!
