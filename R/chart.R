@@ -99,8 +99,7 @@ makeFieldChart <- function(
   # =======================================================
 
   setwd(wd)
-  names(df)[names(df) == yCol] <- "yCol"
-  names(df)[names(df) == xCol] <- "xCol"
+  df <- dplyr::rename(df, "yCol" = yCol, "xCol" = xCol)
 
   # x 좌표는 소수점 2째자리로 반올림, y좌표는 datatime으로 변경
   df["yCol"] <- round(df["yCol"], digit=2)
