@@ -118,8 +118,8 @@ makeFieldChart <- function(
     )
 
   #
-  label_x <- datetime_to_timestamp(df[[yColumn]][1])
-  top_label_x <- datetime_to_timestamp(df[[yColumn]][length(df[[yColumn]])])
+  label_x <- highcharter::datetime_to_timestamp(df[[yColumn]][1])
+  top_label_x <- highcharter::datetime_to_timestamp(df[[yColumn]][length(df[[yColumn]])])
   label_y <- c()
   label_text <- c()
   # group 시그널 변수, 계산식 추가 필요!
