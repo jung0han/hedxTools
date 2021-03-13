@@ -3,3 +3,4 @@
 export(base64ToHtml)
 export(makeFieldChart)
 import(dplyr)
+importFrom(magrittr,"%>%")
