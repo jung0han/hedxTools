@@ -20,3 +20,5 @@ Imports:
     webshot,
     RCurl,
     dplyr
+Depends: 
+    R (>= 2.10)

@@ -38,7 +38,7 @@
 # 컬럼 정의 ----
 makeFieldChart <- function(
   wd = getwd(),
-  df = read.csv("./data/sample.csv", header = T),
+  df = dxChart::ffr_fdr_sample,
   xColumn = "value",
   yColumn = "PURC_MON_NEW",
   xType = "datatime",
@@ -289,7 +289,7 @@ makeFieldChart <- function(
 #' base64 문자열을 html 페이지로 띄워서 보기 위한 함수
 #'
 #' @param base64Chart Base64 문자열
-#' 
+#'
 #' @return Html page.
 #' @rdname base64ToHtml
 #' @export
