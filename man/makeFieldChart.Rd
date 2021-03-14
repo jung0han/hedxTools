@@ -9,7 +9,8 @@ makeFieldChart(
   df = dxChart::ffr_fdr_sample,
   yCol = "value",
   xCol = "PURC_MON_NEW",
-  xType = "datatime",
+  groupCol = "group",
+  xType = "datetime",
   xLeftMargin = 0.15,
   yMaxRate = 1.4,
   yLeftText = "FFR(\%)",
@@ -25,7 +26,6 @@ makeFieldChart(
   linelabelFontSize = "12px",
   weeklabelFontWeight = "bold",
   weeklabelFontSize = "12px",
-  useDatalabels = TRUE,
   datalabelFontWeight = "normal",
   datalabelOutline = "1px white",
   imageHeight = 400,
@@ -40,9 +40,11 @@ makeFieldChart(
 
 \item{yCol}{y축 좌표가 위치한 행, 기본값 = "value"}
 
-\item{xCol}{x축 좌표가 위한 행, 기본값 = "PURC_MON_NEW"}
+\item{xCol}{x축 좌표가 위치한 행, 기본값 = "PURC_MON_NEW"}
 
-\item{xType}{x축의 타입 : "datetime" 또는 "category", 기본값 = "datatime"}
+\item{groupCol}{데이터 Group이 위치한 행, 기본값 = "group"}
+
+\item{xType}{x축의 타입 : "datetime" 또는 "category", 기본값 = "datetime"}
 
 \item{xLeftMargin}{x축 좌측의 여백값으로 타입에 따라 값을 변경 해야함, 기본값 = 0.15}
 
@@ -73,8 +75,6 @@ makeFieldChart(
 \item{weeklabelFontWeight}{주간 라벨의 폰트 스타일 : 'normal' 또는 bold', 기본값 = 'bold'}
 
 \item{weeklabelFontSize}{주간 라벨의 폰트 사이즈, 기본값 = "12px"}
-
-\item{useDatalabels}{데이터 라벨의 사용 여부, 기본값 = TRUE}
 
 \item{datalabelFontWeight}{데이터 라벨의 폰트 스타일 : 'normal' 또는 bold', 기본값 = "normal"}
 

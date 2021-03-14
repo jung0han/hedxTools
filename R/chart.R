@@ -5,8 +5,9 @@
 #' @param wd 작업 디렉토리, 기본값 = getwd()
 #' @param df 데이터프레임(group, x축 좌표(문자), y축 좌표(숫자), 기본값 = read.csv("./data/sample.csv", header = T)
 #' @param yCol y축 좌표가 위치한 행, 기본값 = "value"
-#' @param xCol x축 좌표가 위한 행, 기본값 = "PURC_MON_NEW"
-#' @param xType x축의 타입 : "datetime" 또는 "category", 기본값 = "datatime"
+#' @param xCol x축 좌표가 위치한 행, 기본값 = "PURC_MON_NEW"
+#' @param groupCol 데이터 Group이 위치한 행, 기본값 = "group"
+#' @param xType x축의 타입 : "datetime" 또는 "category", 기본값 = "datetime"
 #' @param xLeftMargin x축 좌측의 여백값으로 타입에 따라 값을 변경 해야함, 기본값 = 0.15
 #' @param yMaxRate y축 좌표의 최대값 대비 y축의 최대값 비율, 기본값 = 1.4
 #' @param yLeftText y축 좌측 문구, 기본값 = "FFR(%)"
@@ -22,7 +23,6 @@
 #' @param linelabelFontSize 라인라벨의 폰트 사이즈, 기본값 = "12px"
 #' @param weeklabelFontWeight 주간 라벨의 폰트 스타일 : 'normal' 또는 bold', 기본값 = 'bold'
 #' @param weeklabelFontSize 주간 라벨의 폰트 사이즈, 기본값 = "12px"
-#' @param useDatalabels 데이터 라벨의 사용 여부, 기본값 = TRUE
 #' @param datalabelFontWeight 데이터 라벨의 폰트 스타일 : 'normal' 또는 bold', 기본값 = "normal"
 #' @param datalabelOutline 데이터 라벨의 아웃라인 : "사이즈 색상", 기본값 = "1px white"
 #' @param imageHeight base64 이미지의 높이, 기본값 = 400
@@ -31,7 +31,7 @@
 #' @return base64 문자열 또는 htmlwidget object.
 #'
 #' @rdname makeFieldChart
-#' @import dplyr
+#' @importFrom magrittr %>%
 #' @export
 
 # 컬럼 정의 ----
@@ -40,7 +40,8 @@ makeFieldChart <- function(
   df = dxChart::ffr_fdr_sample,
   yCol = "value",
   xCol = "PURC_MON_NEW",
-  xType = "datatime",
+  groupCol = "group",
+  xType = "datetime",
   xLeftMargin = 0.15,
   yMaxRate = 1.4,
   yLeftText = "FFR(%)",
@@ -56,7 +57,6 @@ makeFieldChart <- function(
   linelabelFontSize = "12px",
   weeklabelFontWeight = 'bold',
   weeklabelFontSize = "12px",
-  useDatalabels = TRUE,
   datalabelFontWeight = "normal",
   datalabelOutline = "1px white",
   imageHeight = 400,
@@ -98,9 +98,9 @@ makeFieldChart <- function(
   # =======================================================
 
   setwd(wd)
-  df <- dplyr::rename(df, "yCol" = yCol, "xCol" = xCol)
+  df <- dplyr::rename(df, "yCol" = yCol, "xCol" = xCol, "group" = groupCol)
 
-  # x 좌표는 소수점 2째자리로 반올림, y좌표는 datatime으로 변경
+  # x 좌표는 소수점 둘째자리로 반올림, y좌표는 datetime으로 변경
   df["yCol"] <- round(df["yCol"], digit=2)
   df["xCol"] <- as.Date(paste0(df[["xCol"]],1),"%Y%m%d")
 
@@ -109,7 +109,7 @@ makeFieldChart <- function(
   unique_group <- sort(unique(df$group))
 
   # y축 최대값을 정하기 위해 NA를 제외한 value의 최대값을 구하고 1.4를 곱함
-  y_max <- max(df$value[!is.na(df$value)]) * yMaxRate
+  y_max <- max(df$yCol[!is.na(df$yCol)]) * yMaxRate
 
   ffr_week <- makeFFRWeekTable()
   ffr_signal <- checkWeekSignal(
@@ -180,9 +180,8 @@ makeFieldChart <- function(
     highcharter::hc_plotOptions(
       series = list(
         dataLabels = list(
-          enabled = useDatalabels,
           allowOverlap = TRUE,
-          format = "{point.value:.2f}",
+          format = "{point.yCol:.2f}",
           style = list(fontWeight = datalabelFontWeight, textOutline = datalabelOutline)
           ),
         lineWidth = lineWidth
@@ -270,7 +269,7 @@ makeFieldChart <- function(
     if(!webshot::is_phantomjs_installed()) {
       webshot::install_phantomjs()
     }
-    tf1 <- "dxChart.png"
+    tf1 <- "./tmp/dxChart.png"
     if(!dir.exists('tmp')) {
       dir.create('tmp')
     }
