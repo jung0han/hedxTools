@@ -18,6 +18,12 @@ makeFieldChart(
   lineWidth = 1,
   tickIntervalY = 0.5,
   tickIntervalX = 30 * 24 * 3600 * 1000,
+  linelabelSignals = c("red", "green", "grey", "green", "red"),
+  linelabelSymbols = c("", "", "●", "", "●"),
+  lineSymbols = c("circle", "circle", "diamond", "diamond", "square"),
+  lineSymbolColors = c("white", "", "", "", "white"),
+  groupColors = c("#000000", "#FF0000", "#FF00FF", "#7F7F7F", "#FFC000"),
+  useDatalabels = c(TRUE, TRUE, TRUE, FALSE, TRUE),
   fontFamily = "LG스마트체 Regular",
   titleText = "Global OLED (Product)",
   titleFontWeight = "bold",
@@ -36,7 +42,7 @@ makeFieldChart(
 \arguments{
 \item{wd}{작업 디렉토리, 기본값 = getwd()}
 
-\item{df}{데이터프레임(group, x축 좌표(문자), y축 좌표(숫자), 기본값 = read.csv("./data/sample.csv", header = T)}
+\item{df}{데이터프레임(group, x축 좌표(문자), y축 좌표(숫자), 기본값 = dxChart::ffr_fdr_sample}
 
 \item{yCol}{y축 좌표가 위치한 행, 기본값 = "value"}
 
@@ -58,7 +64,24 @@ makeFieldChart(
 
 \item{tickIntervalY}{y축 라벨 표기 간격, 기본값 = 0.5}
 
-\item{tickIntervalX}{x축 라벨 표기 간격으로 datetime 타입의 경우 초단위로 설정, 기본값 = 30 * 24 * 3600 * 1000}
+\item{tickIntervalX}{x축 라벨 표기 간격으로 datetime 타입의 경우 초단위로 설정,
+기본값 = 30 * 24 * 3600 * 1000}
+
+\item{linelabelSignals}{라인라벨의 시그널 색상,
+기본값 = c("red", "green", "grey", "green", "red"),}
+
+\item{linelabelSymbols}{라인라벨 시그널의 모양, 기본값 = c("", "", "●", "", "●"),}
+
+\item{lineSymbols}{라인의 심볼 : circle, diamond 또는 square ,
+기본값 = c('circle', 'circle', 'diamond', 'diamond', 'square'),}
+
+\item{lineSymbolColors}{라인 심볼의 색상으로 설정하지 않으면 라인 색상을 따라감,
+기본값 = c('white', '', '', '', 'white'),}
+
+\item{groupColors}{그룹별 라인과 라인라벨의 색상 : 색상코드,
+기본값 = c("#000000", "#FF0000", "#FF00FF", "#7F7F7F", "#FFC000")}
+
+\item{useDatalabels}{데이터 라벨의 표시 여부 : TRUE 또는 FALSE, 기본값 = c(TRUE, TRUE, TRUE, FALSE, TRUE),}
 
 \item{fontFamily}{타이틀, 라벨, 데이터라벨의 폰트, 기본값 = "LG스마트체 Regular"}
 

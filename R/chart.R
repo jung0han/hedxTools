@@ -3,7 +3,7 @@
 #' Field Chart를 만들기 위한 함수
 #'
 #' @param wd 작업 디렉토리, 기본값 = getwd()
-#' @param df 데이터프레임(group, x축 좌표(문자), y축 좌표(숫자), 기본값 = read.csv("./data/sample.csv", header = T)
+#' @param df 데이터프레임(group, x축 좌표(문자), y축 좌표(숫자), 기본값 = dxChart::ffr_fdr_sample
 #' @param yCol y축 좌표가 위치한 행, 기본값 = "value"
 #' @param xCol x축 좌표가 위치한 행, 기본값 = "PURC_MON_NEW"
 #' @param groupCol 데이터 Group이 위치한 행, 기본값 = "group"
@@ -14,7 +14,18 @@
 #' @param yRightText y축 우측 문구, 기본값 = "FDR(%)"
 #' @param lineWidth 라인 두께, 기본값 = 1
 #' @param tickIntervalY y축 라벨 표기 간격, 기본값 = 0.5
-#' @param tickIntervalX x축 라벨 표기 간격으로 datetime 타입의 경우 초단위로 설정, 기본값 = 30 * 24 * 3600 * 1000
+#' @param tickIntervalX x축 라벨 표기 간격으로 datetime 타입의 경우 초단위로 설정, 
+#'  기본값 = 30 * 24 * 3600 * 1000
+#' @param linelabelSignals 라인라벨의 시그널 색상, 
+#'  기본값 = c("red", "green", "grey", "green", "red"),
+#' @param linelabelSymbols 라인라벨 시그널의 모양, 기본값 = c("", "", "●", "", "●"),
+#' @param lineSymbols 라인의 심볼 : circle, diamond 또는 square , 
+#'  기본값 = c('circle', 'circle', 'diamond', 'diamond', 'square'),
+#' @param lineSymbolColors 라인 심볼의 색상으로 설정하지 않으면 라인 색상을 따라감, 
+#'  기본값 = c('white', '', '', '', 'white'),
+#' @param groupColors 그룹별 라인과 라인라벨의 색상 : 색상코드, 
+#'  기본값 = c("#000000", "#FF0000", "#FF00FF", "#7F7F7F", "#FFC000")
+#' @param useDatalabels 데이터 라벨의 표시 여부 : TRUE 또는 FALSE, 기본값 = c(TRUE, TRUE, TRUE, FALSE, TRUE),
 #' @param fontFamily 타이틀, 라벨, 데이터라벨의 폰트, 기본값 = "LG스마트체 Regular"
 #' @param titleText 타이틀 문구, 기본값 = "Global OLED (Product)"
 #' @param titleFontWeight 타이틀 폰트 스타일 : 'normal' 또는 bold', 기본값 = 'bold'
@@ -49,6 +60,12 @@ makeFieldChart <- function(
   lineWidth = 1,
   tickIntervalY = 0.5,
   tickIntervalX = 30 * 24 * 3600 * 1000,
+  linelabelSignals = c("red", "green", "grey", "green", "red"),
+  linelabelSymbols = c("", "", "●", "", "●"),
+  lineSymbols = c('circle', 'circle', 'diamond', 'diamond', 'square'),
+  lineSymbolColors = c('white', '', '', '', 'white'),
+  groupColors = c("#000000", "#FF0000", "#FF00FF", "#7F7F7F", "#FFC000"),
+  useDatalabels = c(TRUE, TRUE, TRUE, FALSE, TRUE),
   fontFamily = "LG스마트체 Regular",
   titleText = "Global OLED (Product)",
   titleFontWeight = 'bold',
@@ -122,27 +139,23 @@ makeFieldChart <- function(
   top_label_x <- highcharter::datetime_to_timestamp(df[["xCol"]][length(df[["xCol"]])])
   label_y <- c()
   label_text <- c()
-  # group 시그널 변수, 계산식 추가 필요!
-  label_signal <- c("red", "green", "blue", "green", "red")
-  label_signal_symbol <- c("", "", "●", "", "●")
-  group_colors <- c(
-    rgb(0,0,0),
-    rgb(1,0,0),
-    rgb(1,0,1),
-    rgb(127/255,127/255,127/255),
-    rgb(1,192/255,0)
-    )
-  use_datalabels <- c(TRUE, TRUE, TRUE, FALSE, TRUE)
-  line_symbols <- c('circle', 'circle', 'diamond', 'diamond', 'square')
-  line_symbols_color <- c('white', '', '', '', 'white')
 
   for(group in unique_group) {
     label_text <- c(label_text, as.character(df_group[[group]][["group"]][1]))
     label_y <- c(label_y, df_group[[group]][["yCol"]][1])
   }
 
-  label_df <- data.frame(label_text, label_y, label_signal, label_signal_symbol, group_colors, use_datalabels, line_symbols, line_symbols_color)
-
+  label_df <- data.frame(
+    label_text, 
+    label_y, 
+    linelabelSignals, 
+    linelabelSymbols, 
+    groupColors, 
+    useDatalabels, 
+    lineSymbols, 
+    lineSymbolColors
+    )
+  print(label_df)
   label <- list()
 
   # 옵션값을 가지고 라인 좌측 라벨 구조 생성
@@ -152,11 +165,11 @@ makeFieldChart <- function(
       borderWidth=0,
       text = paste0(
         "<span style='color:",
-        label_df[label_df$label_text == group,][['label_signal']], ";'>",
-        label_df[label_df$label_text == group,][['label_signal_symbol']],
+        label_df[label_df$label_text == group,][['linelabelSignals']], ";'>",
+        label_df[label_df$label_text == group,][['linelabelSymbols']],
         "</span>",
         "<p style='color:",
-        label_df[label_df$label_text == group,][['group_colors']], ";'>",
+        label_df[label_df$label_text == group,][['groupColors']], ";'>",
         group,
         "</span>"
         )
@@ -167,8 +180,23 @@ makeFieldChart <- function(
   dxChart <- highcharter::highchart() %>%
     highcharter::hc_chart(plotBorderWidth = 1) %>%
     highcharter::hc_yAxis_multiples(
-    list(title = list(text = yLeftText), min=0, max=y_max, tickInterval = tickIntervalY, endOnTick=FALSE, gridLineColor=""),
-    list(title = list(text = yRightText), min=0, max=y_max, endOnTick=FALSE, gridLineColor="", showLastLabel = FALSE, opposite = TRUE)
+    list(
+      title = list(text = yLeftText), 
+      min=0, 
+      max=y_max, 
+      tickInterval = tickIntervalY, 
+      endOnTick=FALSE, 
+      gridLineColor=""
+      ),
+    list(
+      title = list(text = yRightText), 
+      min=0, 
+      max=y_max, 
+      endOnTick=FALSE, 
+      gridLineColor="", 
+      showLastLabel = FALSE, 
+      opposite = TRUE
+      )
   ) %>%
     highcharter::hc_xAxis(
       minPadding = xLeftMargin,
@@ -240,7 +268,12 @@ makeFieldChart <- function(
           verticalAlign="middle",
           allowOverlap=TRUE,
           align="left",
-          style = list(fontFamily = fontFamily, fontWeight = weeklabelFontWeight, fontSize = weeklabelFontSize, color = ffr_signal),
+          style = list(
+            fontFamily = fontFamily, 
+            fontWeight = weeklabelFontWeight, 
+            fontSize = weeklabelFontSize, 
+            color = ffr_signal
+            ),
           backgroundColor = rgb(217/255,217/255,217/255)
         ),
         labels = list(
@@ -256,10 +289,17 @@ makeFieldChart <- function(
       highcharter::hc_add_series(data = df_group[[group]],
                     name = group,
                     highcharter::hcaes(x = xCol, y = yCol),
-                    marker = list(symbol = label_df[label_df$label_text == group,][['line_symbols']], fillColor=label_df[label_df$label_text == group,][['line_symbols_color']], lineWidth=1, lineColor=NULL),
-                    dataLabels = list(enabled = label_df[label_df$label_text == group,][['use_datalabels']],
-                                      color = label_df[label_df$label_text == group,][['group_colors']]),
-                    color=label_df[label_df$label_text == group,][['group_colors']],
+                    marker = list(
+                      symbol = label_df[label_df$label_text == group,][['lineSymbols']], 
+                      fillColor=label_df[label_df$label_text == group,][['lineSymbolColors']], 
+                      lineWidth=1, 
+                      lineColor=NULL
+                      ),
+                    dataLabels = list(
+                      enabled = label_df[label_df$label_text == group,][['useDatalabels']],
+                      color = label_df[label_df$label_text == group,][['groupColors']]
+                      ),
+                    color=label_df[label_df$label_text == group,][['groupColors']],
                     yAxis=1,
                     type = "line")
   }
