@@ -4,12 +4,12 @@
 \alias{checkWeekSignal}
 \title{Check Week Signal}
 \usage{
-checkWeekSignal(last = 0, this = 0)
+checkWeekSignal(last = 1, this = 1)
 }
 \arguments{
-\item{last}{지난주 실적, 기본값 = 0}
+\item{last}{지난주 실적, 기본값 = 1}
 
-\item{this}{금주 실적, 기본값 = 0}
+\item{this}{금주 실적, 기본값 = 1}
 }
 \value{
 color str

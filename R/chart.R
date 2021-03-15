@@ -364,28 +364,35 @@ base64ToHtml <- function(base64Chart = makeFieldChart()) {
   browseURL(tf2)
 }
 
-#' Make Sample Chart
+#' Make Chart by preset
 #'
-#' Type별 Sample 데이터를 넣어서 차트를 만드는 함수
+#' Preset Argument를 넣어서 차트를 만드는 함수
 #'
-#' @param type ffr 또는 hazard
+#' @param preset ffr, hazard
+#' @param df 데이터프레임(group, x축 좌표(문자), y축 좌표(숫자), 기본값 = NULL
+#' @param base64 base64 이미지 또는 htmlwidget object 출력을 선택, 기본값 = TRUE
 #'
-#' @return htmlwidget object
-#' @rdname makeSampleChart
+#' @return base64 str or htmlwidget object
+#' @rdname makePresetChart
 #' @export
 #'
-makeSampleChart <- function(type = "ffr") {
-  if(type == "ffr") {
-    dxChart <- dxChart::makeFieldChart(base64 = FALSE)
+makePresetChart <- function(preset = "ffr", df = NaN, base64 = TRUE) {
+  if(preset == "ffr") {
+    if(is.na(df)) {
+      df <- dxChart::ffr_fdr_sample
+    }
+    dxChart <- dxChart::makeFieldChart(base64 = base64)
     return(dxChart)
   }
-  if(type == "hazard") {
+  if(preset == "hazard") {
+    if(is.na(df)) {
+      df <- dxChart::hazard_accumulate_sample
+    }
     dxChart <- dxChart::makeFieldChart(
-      base64 = FALSE,
       lineSymbols = FALSE,
       useCustomize = FALSE,
       xLeftMargin = 0,
-      df = dxChart::hazard_accumulate_sample,
+      df = df,
       yLeftText = "Hazard (%)",
       xCol="SVC_MON_NEW_ind_cal",
       yCol="svc_rate_value",
@@ -395,7 +402,8 @@ makeSampleChart <- function(type = "ffr") {
       yRightUse = FALSE,
       tickIntervalX = 1,
       useLinelabels = TRUE,
-      markerHover = FALSE
+      markerHover = FALSE,
+      base64 = base64
       )
     return(dxChart)
   }

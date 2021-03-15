@@ -3,5 +3,5 @@
 export(base64ToHtml)
 export(checkWeekSignal)
 export(makeFieldChart)
-export(makeSampleChart)
+export(makePresetChart)
 importFrom(magrittr,"%>%")
