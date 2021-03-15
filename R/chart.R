@@ -68,15 +68,17 @@ makeFieldChart <- function(
   useCustomize = TRUE,
   linelabelSignals = c("red", "green", "grey", "green", "red"),
   linelabelSymbols = c("", "", "●", "", "●"),
+  weeklabelDate = c("(3/4)", "(3/11)"),
+  weeklabelValue = c(1.06, 1.04),
   lineSymbols = c('circle', 'circle', 'diamond', 'diamond', 'square'),
   lineSymbolColors = c('white', '', '', '', 'white'),
-  markerHover = TRUE, #
+  markerHover = TRUE,
   groupColors = c("#000000", "#FF0000", "#FF00FF", "#7F7F7F", "#FFC000"),
   useDatalabels = c(TRUE, TRUE, TRUE, FALSE, TRUE),
-  yRightUse = TRUE, #
-  useLeftlabels = TRUE, #
-  useLinelabels = FALSE, #
-  useWeeklabels = TRUE, #
+  yRightUse = TRUE,
+  useLeftlabels = TRUE,
+  useLinelabels = FALSE,
+  useWeeklabels = TRUE,
   fontFamily = "LG스마트체 Regular",
   titleText = "Global OLED (Product)",
   titleFontWeight = 'bold',
@@ -94,32 +96,6 @@ makeFieldChart <- function(
   # =======================================================
   # Utility functions
   # =======================================================
-
-  # 차트 생성 조건 설정
-  makeFFRWeekTable <- function() {
-    desc <- c("last", "this")
-    date <- c("(3/4)", "(3/11)")
-    value <- c(1.06, 1.04)
-    df <- data.frame(desc, date, value)
-    df <- split(df, df$desc)
-
-    return(df)
-  }
-
-  # 지난주 금주 실적 시그널 확인
-  checkWeekSignal <- function(last, this) {
-    if(last >= this) {
-      if(last == this) {
-        signal = "black"
-      } else {
-        signal = "green"
-      }
-    } else {
-      signal = "red"
-    }
-    print(paste("Week signal :", signal))
-    return(signal)
-  }
 
   # =======================================================
   # Main function
@@ -141,8 +117,13 @@ makeFieldChart <- function(
   # y축 최대값을 정하기 위해 NA를 제외한 value의 최대값을 구하고 1.4를 곱함
   y_max <- max(df$yCol[!is.na(df$yCol)]) * yMaxRate
 
-  ffr_week <- makeFFRWeekTable()
-  ffr_signal <- checkWeekSignal(
+  # 주간 실적의 시그널과 라벨을 구하기 위한 데이터 프레임을 만듬
+  desc <- c("last", "this")
+
+  ffr_week <- data.frame(desc, weeklabelDate, weeklabelValue)
+  ffr_week <- split(ffr_week, ffr_week$desc)
+
+  ffr_signal <- dxChart::checkWeekSignal(
     ffr_week[['last']][['value']],
     ffr_week[['this']][['value']]
     )
@@ -393,21 +374,46 @@ base64ToHtml <- function(base64Chart = makeFieldChart()) {
 #' @return htmlwidget object
 #' @rdname makeSampleChart
 #' @export
-#' 
+#'
 makeSampleChart <- function(type = "ffr") {
   if(type == "ffr") {
     dxChart::makeFFRWeekTable()
   }
   if(type == "hazard") {
     dxChart::makeFieldChart(
-      base64 = FALSE, 
-      lineSymbols = FALSE, 
-      useCustomize = FALSE, 
-      df = dxChart::hazard_accumulate_sample, 
+      base64 = FALSE,
+      lineSymbols = FALSE,
+      useCustomize = FALSE,
+      df = dxChart::hazard_accumulate_sample,
       xCol="SVC_MON_NEW_ind_cal",
       yCol="svc_rate_value",
       groupCol = "CALC_PROD_DT_ind",
       xType = "category",useLeftlabels = FALSE, yRightUse = FALSE, tickIntervalX = 1, useLinelabels = TRUE
       )
   }
+}
+
+#' Check Week Signal
+#'
+#' 지난주 금주 실적 시그널 확인 함수
+#'
+#' @param last 지난주 실적, 기본값 = 0
+#' @param this 금주 실적, 기본값 = 0
+#'
+#' @return color str
+#' @rdname checkWeekSignal
+#' @export
+#'
+checkWeekSignal <- function(last = 0, this = 0) {
+  if(last >= this) {
+    if(last == this) {
+      signal = "black"
+    } else {
+      signal = "green"
+    }
+  } else {
+    signal = "red"
+  }
+  print(paste("Week signal :", signal))
+  return(signal)
 }

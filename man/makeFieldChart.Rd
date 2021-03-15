@@ -21,6 +21,8 @@ makeFieldChart(
   useCustomize = TRUE,
   linelabelSignals = c("red", "green", "grey", "green", "red"),
   linelabelSymbols = c("", "", "●", "", "●"),
+  weeklabelDate = c("(3/4)", "(3/11)"),
+  weeklabelValue = c(1.06, 1.04),
   lineSymbols = c("circle", "circle", "diamond", "diamond", "square"),
   lineSymbolColors = c("white", "", "", "", "white"),
   markerHover = TRUE,
