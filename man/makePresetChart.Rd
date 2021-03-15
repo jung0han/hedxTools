@@ -4,12 +4,14 @@
 \alias{makePresetChart}
 \title{Make Chart by preset}
 \usage{
-makePresetChart(preset = "ffr", df = NULL, base64 = TRUE)
+makePresetChart(preset = "ffr", df = NaN, title = "", base64 = TRUE)
 }
 \arguments{
 \item{preset}{ffr, hazard}
 
 \item{df}{데이터프레임(group, x축 좌표(문자), y축 좌표(숫자), 기본값 = NULL}
+
+\item{title}{타이틀 문구, 기본값 = ""}
 
 \item{base64}{base64 이미지 또는 htmlwidget object 출력을 선택, 기본값 = TRUE}
 }
