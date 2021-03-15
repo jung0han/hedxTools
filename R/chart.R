@@ -124,8 +124,8 @@ makeFieldChart <- function(
   ffr_week <- split(ffr_week, ffr_week$desc)
 
   ffr_signal <- dxChart::checkWeekSignal(
-    ffr_week[['last']][['value']],
-    ffr_week[['this']][['value']]
+    ffr_week[['last']][['weeklabelValue']],
+    ffr_week[['this']][['weeklabelValue']]
     )
 
   #
@@ -211,7 +211,7 @@ makeFieldChart <- function(
     highcharter::hc_xAxis(
       minPadding = xLeftMargin,
       type = xType,
-      showFirstLabel = FALSE,
+      showFirstLabel = ifelse(xType == "datetime", FALSE, TRUE),
       tickInterval = tickIntervalX,
       crosshair = list(
         width=1,
@@ -303,7 +303,6 @@ makeFieldChart <- function(
   }
 
   for(group in label_df$label_text) {
-    print(df_group[[group]])
     dxChart <- dxChart %>%
       highcharter::hc_add_series(
         data = df_group[[group]],
@@ -377,19 +376,28 @@ base64ToHtml <- function(base64Chart = makeFieldChart()) {
 #'
 makeSampleChart <- function(type = "ffr") {
   if(type == "ffr") {
-    dxChart::makeFFRWeekTable()
+    dxChart <- dxChart::makeFieldChart(base64 = FALSE)
+    return(dxChart)
   }
   if(type == "hazard") {
-    dxChart::makeFieldChart(
+    dxChart <- dxChart::makeFieldChart(
       base64 = FALSE,
       lineSymbols = FALSE,
       useCustomize = FALSE,
+      xLeftMargin = 0,
       df = dxChart::hazard_accumulate_sample,
+      yLeftText = "Hazard (%)",
       xCol="SVC_MON_NEW_ind_cal",
       yCol="svc_rate_value",
       groupCol = "CALC_PROD_DT_ind",
-      xType = "category",useLeftlabels = FALSE, yRightUse = FALSE, tickIntervalX = 1, useLinelabels = TRUE
+      xType = "category",
+      useLeftlabels = FALSE,
+      yRightUse = FALSE,
+      tickIntervalX = 1,
+      useLinelabels = TRUE,
+      markerHover = FALSE
       )
+    return(dxChart)
   }
 }
 
@@ -397,14 +405,14 @@ makeSampleChart <- function(type = "ffr") {
 #'
 #' 지난주 금주 실적 시그널 확인 함수
 #'
-#' @param last 지난주 실적, 기본값 = 0
-#' @param this 금주 실적, 기본값 = 0
+#' @param last 지난주 실적, 기본값 = 1
+#' @param this 금주 실적, 기본값 = 1
 #'
 #' @return color str
 #' @rdname checkWeekSignal
 #' @export
 #'
-checkWeekSignal <- function(last = 0, this = 0) {
+checkWeekSignal <- function(last = 1, this = 1) {
   if(last >= this) {
     if(last == this) {
       signal = "black"
