@@ -18,12 +18,18 @@ makeFieldChart(
   lineWidth = 1,
   tickIntervalY = 0.5,
   tickIntervalX = 30 * 24 * 3600 * 1000,
+  useCustomize = TRUE,
   linelabelSignals = c("red", "green", "grey", "green", "red"),
   linelabelSymbols = c("", "", "●", "", "●"),
   lineSymbols = c("circle", "circle", "diamond", "diamond", "square"),
   lineSymbolColors = c("white", "", "", "", "white"),
+  markerHover = TRUE,
   groupColors = c("#000000", "#FF0000", "#FF00FF", "#7F7F7F", "#FFC000"),
   useDatalabels = c(TRUE, TRUE, TRUE, FALSE, TRUE),
+  yRightUse = TRUE,
+  useLeftlabels = TRUE,
+  useLinelabels = FALSE,
+  useWeeklabels = TRUE,
   fontFamily = "LG스마트체 Regular",
   titleText = "Global OLED (Product)",
   titleFontWeight = "bold",
@@ -78,10 +84,20 @@ makeFieldChart(
 \item{lineSymbolColors}{라인 심볼의 색상으로 설정하지 않으면 라인 색상을 따라감,
 기본값 = c('white', '', '', '', 'white'),}
 
-\item{groupColors}{그룹별 라인과 라인라벨의 색상 : 색상코드,
+\item{markerHover}{라인에 마우스를 올렸을 때 라인 심볼의 표시 여부 : TRUE 또는 FALSE, 기본값 = TRUE}
+
+\item{groupColors}{그룹별 라인과 라인라벨의 색상 : 색상코드 또는 FALSE,
 기본값 = c("#000000", "#FF0000", "#FF00FF", "#7F7F7F", "#FFC000")}
 
 \item{useDatalabels}{데이터 라벨의 표시 여부 : TRUE 또는 FALSE, 기본값 = c(TRUE, TRUE, TRUE, FALSE, TRUE),}
+
+\item{yRightUse}{우측 Y축을 사용할지 여부, 기본값 = TRUE}
+
+\item{useLeftlabels}{좌측 라벨을 사용할지 여부, 기본값 = TRUE}
+
+\item{useLinelabels}{라인별 라벨을 사용할지 여부, 기본값 = FALSE}
+
+\item{useWeeklabels}{주간 라벨을 사용할지 여부, 기본값 = TRUE}
 
 \item{fontFamily}{타이틀, 라벨, 데이터라벨의 폰트, 기본값 = "LG스마트체 Regular"}
 

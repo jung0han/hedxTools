@@ -23,9 +23,14 @@
 #'  기본값 = c('circle', 'circle', 'diamond', 'diamond', 'square'),
 #' @param lineSymbolColors 라인 심볼의 색상으로 설정하지 않으면 라인 색상을 따라감,
 #'  기본값 = c('white', '', '', '', 'white'),
+#' @param markerHover 라인에 마우스를 올렸을 때 라인 심볼의 표시 여부 : TRUE 또는 FALSE, 기본값 = TRUE
 #' @param groupColors 그룹별 라인과 라인라벨의 색상 : 색상코드 또는 FALSE,
 #'  기본값 = c("#000000", "#FF0000", "#FF00FF", "#7F7F7F", "#FFC000")
 #' @param useDatalabels 데이터 라벨의 표시 여부 : TRUE 또는 FALSE, 기본값 = c(TRUE, TRUE, TRUE, FALSE, TRUE),
+#' @param yRightUse 우측 Y축을 사용할지 여부, 기본값 = TRUE
+#' @param useLeftlabels 좌측 라벨을 사용할지 여부, 기본값 = TRUE
+#' @param useLinelabels 라인별 라벨을 사용할지 여부, 기본값 = FALSE
+#' @param useWeeklabels 주간 라벨을 사용할지 여부, 기본값 = TRUE
 #' @param fontFamily 타이틀, 라벨, 데이터라벨의 폰트, 기본값 = "LG스마트체 Regular"
 #' @param titleText 타이틀 문구, 기본값 = "Global OLED (Product)"
 #' @param titleFontWeight 타이틀 폰트 스타일 : 'normal' 또는 bold', 기본값 = 'bold'
@@ -57,7 +62,6 @@ makeFieldChart <- function(
   yMaxRate = 1.4,
   yLeftText = "FFR(%)",
   yRightText = "FDR(%)",
-  yRightUse = TRUE, #
   lineWidth = 1,
   tickIntervalY = 0.5,
   tickIntervalX = 30 * 24 * 3600 * 1000,
@@ -66,9 +70,13 @@ makeFieldChart <- function(
   linelabelSymbols = c("", "", "●", "", "●"),
   lineSymbols = c('circle', 'circle', 'diamond', 'diamond', 'square'),
   lineSymbolColors = c('white', '', '', '', 'white'),
+  markerHover = TRUE, #
   groupColors = c("#000000", "#FF0000", "#FF00FF", "#7F7F7F", "#FFC000"),
   useDatalabels = c(TRUE, TRUE, TRUE, FALSE, TRUE),
+  yRightUse = TRUE, #
+  useLeftlabels = TRUE, #
   useLinelabels = FALSE, #
+  useWeeklabels = TRUE, #
   fontFamily = "LG스마트체 Regular",
   titleText = "Global OLED (Product)",
   titleFontWeight = 'bold',
@@ -122,7 +130,9 @@ makeFieldChart <- function(
 
   # x 좌표는 소수점 둘째자리로 반올림, y좌표는 datetime으로 변경
   df["yCol"] <- round(df["yCol"], digit=2)
-  df["xCol"] <- as.Date(paste0(df[["xCol"]],1),"%Y%m%d")
+  if(xType == "datetime") {
+    df["xCol"] <- as.Date(paste0(df[["xCol"]],1),"%Y%m%d")
+  }
 
   # group별로 df를 분리 해주고 정렬
   df_group <- split(df, df$group)
@@ -138,13 +148,19 @@ makeFieldChart <- function(
     )
 
   #
-  label_x <- highcharter::datetime_to_timestamp(df[["xCol"]][1])
-  top_label_x <- highcharter::datetime_to_timestamp(df[["xCol"]][length(df[["xCol"]])])
+  label_x <- ifelse(xType == "datetime", highcharter::datetime_to_timestamp(df[["xCol"]][1]), 1)
+  top_label_x <- ifelse(
+    xType == "datetime",
+    highcharter::datetime_to_timestamp(df[["xCol"]][length(df[["xCol"]])]),
+    length(unique_group)
+    )
+
   label_y <- c()
   label_text <- c()
 
   for(group in unique_group) {
-    label_text <- c(label_text, as.character(df_group[[group]][["group"]][1]))
+    group <- as.character(group)
+    label_text <- c(label_text, as.character(df_group[[as.character(group)]][["group"]][1]))
     label_y <- c(label_y, df_group[[group]][["yCol"]][1])
   }
 
@@ -216,7 +232,14 @@ makeFieldChart <- function(
       type = xType,
       showFirstLabel = FALSE,
       tickInterval = tickIntervalX,
-      labels = list(format = "{value:%b}")
+      crosshair = list(
+        width=1,
+        color="#DFDFDF",
+        dashStyle="shortdot"
+      ),
+      labels = list(
+        format = ifelse(xType =="datetime", "{value:%b}", "{value}")
+        )
       ) %>%
     highcharter::hc_plotOptions(
       series = list(
@@ -229,7 +252,6 @@ makeFieldChart <- function(
       )
     ) %>% # dataLabels 전역 설정
     highcharter::hc_tooltip(
-      crosshairs = TRUE,
       sort = TRUE,
       table = TRUE
     ) %>%
@@ -240,94 +262,101 @@ makeFieldChart <- function(
                     titleText),
       margin = 10, align = "center",
       style = list(fontFamily = fontFamily, fontWeight = titleFontWeight, useHTML = TRUE, fontSize = titleFontSize)
-    ) %>%
-    highcharter::hc_annotations(
-      list(
-        draggable = TRUE,
-        labelOptions = list(
-          y = 0,
-          x = -60,
-          verticalAlign="middle",
-          allowOverlap=TRUE,
-          align="left",
-          padding=1,
-          style = list(fontFamily = fontFamily, fontWeight = linelabelFontWeight, fontSize = linelabelFontSize),
-          backgroundColor = ""
-        ),
-        labels = label
-      ), # 차트 좌측 라벨
-      list(
-        draggable = FALSE,
-        labelOptions = list(
-          y = 0,
-          x = -160,
-          verticalAlign="middle",
-          allowOverlap=TRUE,
-          align="left",
-          style = list(fontFamily = fontFamily, fontWeight = weeklabelFontWeight, fontSize = weeklabelFontSize),
-          backgroundColor = "white"
-        ),
-        labels = list(
-          point = list(x = top_label_x, y = y_max, xAxis = 0, yAxis = 0),
-          borderWidth=0,
-          text = paste(ffr_week[['last']][['value']], ffr_week[['last']][['date']], "→")
-        )
-      ),
-      list(
-        draggable = FALSE,
-        labelOptions = list(
-          y = 0,
-          x = 0,
-          verticalAlign="middle",
-          allowOverlap=TRUE,
-          align="left",
-          style = list(
-            fontFamily = fontFamily,
-            fontWeight = weeklabelFontWeight,
-            fontSize = weeklabelFontSize,
-            color = ffr_signal
-            ),
-          backgroundColor = rgb(217/255,217/255,217/255)
-        ),
-        labels = list(
-          point = list(x = top_label_x, y = y_max, xAxis = 0, yAxis = 0),
-          borderWidth=0,
-          text = paste(ffr_week[['this']][['value']], ffr_week[['this']][['date']])
-        )
-      )
     )
 
+  if(useLeftlabels) {
+    dxChart <- dxChart %>% highcharter::hc_add_annotation(
+      labelOptions = list(
+        y = 0,
+        x = -60,
+        verticalAlign="middle",
+        allowOverlap=TRUE,
+        align="left",
+        padding=1,
+        style = list(fontFamily = fontFamily, fontWeight = linelabelFontWeight, fontSize = linelabelFontSize),
+        backgroundColor = ""
+      ),
+      labels = label
+    )
+  }
+
+  if(useWeeklabels) {
+    dxChart <- dxChart %>% highcharter::hc_add_annotation(
+      draggable = FALSE,
+      labelOptions = list(
+        y = 0,
+        x = -160,
+        verticalAlign="middle",
+        allowOverlap=TRUE,
+        align="left",
+        style = list(fontFamily = fontFamily, fontWeight = weeklabelFontWeight, fontSize = weeklabelFontSize),
+        backgroundColor = "white"
+      ),
+      labels = list(
+        point = list(x = top_label_x, y = y_max, xAxis = 0, yAxis = 0),
+        borderWidth=0,
+        text = paste(ffr_week[['last']][['value']], ffr_week[['last']][['date']], "→")
+      )
+    ) %>% highcharter::hc_add_annotation(
+      draggable = FALSE,
+      labelOptions = list(
+        y = 0,
+        x = 0,
+        verticalAlign="middle",
+        allowOverlap=TRUE,
+        align="left",
+        style = list(
+          fontFamily = fontFamily,
+          fontWeight = weeklabelFontWeight,
+          fontSize = weeklabelFontSize,
+          color = ffr_signal
+          ),
+        backgroundColor = rgb(217/255,217/255,217/255)
+      ),
+      labels = list(
+        point = list(x = top_label_x, y = y_max, xAxis = 0, yAxis = 0),
+        borderWidth=0,
+        text = paste(ffr_week[['this']][['value']], ffr_week[['this']][['date']])
+      )
+    )
+  }
+
   for(group in label_df$label_text) {
+    print(df_group[[group]])
     dxChart <- dxChart %>%
-      highcharter::hc_add_series(data = df_group[[group]],
-                    name = group,
-                    highcharter::hcaes(x = xCol, y = yCol),
-                    marker = list(
-                      symbol = label_df[label_df$label_text == group,][['lineSymbols']],
-                      fillColor=label_df[label_df$label_text == group,][['lineSymbolColors']],
-                      lineWidth=1,
-                      lineColor=NULL
-                      ),
-                    dataLabels = list(
-                      enabled = label_df[label_df$label_text == group,][['useDatalabels']],
-                      color = label_df[label_df$label_text == group,][['groupColors']]
-                      ),
-                    label = list(enabled = useLinelabels, style = list(fontWeight = "nomal")),
-                    color=label_df[label_df$label_text == group,][['groupColors']]
-                    ,
-                    yAxis=0,
-                    type = "line")
+      highcharter::hc_add_series(
+        data = df_group[[group]],
+        name = group,
+        highcharter::hcaes(x = xCol, y = yCol),
+        marker = list(
+          enabled = ifelse(lineSymbols, TRUE, FALSE),
+          states = list(hover = list(enabled = markerHover)),
+          symbol = label_df[label_df$label_text == group,][['lineSymbols']],
+          fillColor=label_df[label_df$label_text == group,][['lineSymbolColors']],
+          lineWidth=1,
+          lineColor=NULL
+          ),
+        dataLabels = list(
+          enabled = label_df[label_df$label_text == group,][['useDatalabels']],
+          color = label_df[label_df$label_text == group,][['groupColors']]
+          ),
+        label = list(enabled = useLinelabels, style = list(fontWeight = "nomal")),
+        color=label_df[label_df$label_text == group,][['groupColors']]
+        ,
+        yAxis=0,
+        type = "line"
+        )
   }
 
   if(base64 == TRUE) {
+    if(!dir.exists('tmp')) {
+      dir.create('tmp')
+    }
     htmlwidgets::saveWidget(widget = dxChart, file = "./tmp/dxChart.html")
     if(!webshot::is_phantomjs_installed()) {
       webshot::install_phantomjs()
     }
     tf1 <- "./tmp/dxChart.png"
-    if(!dir.exists('tmp')) {
-      dir.create('tmp')
-    }
     webshot::webshot(url = "./tmp/dxChart.html", vheight = imageHeight, vwidth = imageWidth, file = tf1, delay = 1)
     # png를 base64로 변경
     base64 <- RCurl::base64Encode(readBin(tf1, "raw", file.info(tf1)[1, "size"]), "txt")
@@ -353,4 +382,32 @@ base64ToHtml <- function(base64Chart = makeFieldChart()) {
   html <- sprintf('<html><body><img src="data:image/png;base64,%s"></body></html>', base64)
   cat(html, file = tf2 <- tempfile(fileext = ".html"))
   browseURL(tf2)
+}
+
+#' Make Sample Chart
+#'
+#' Type별 Sample 데이터를 넣어서 차트를 만드는 함수
+#'
+#' @param type ffr 또는 hazard
+#'
+#' @return htmlwidget object
+#' @rdname makeSampleChart
+#' @export
+#' 
+makeSampleChart <- function(type = "ffr") {
+  if(type == "ffr") {
+    dxChart::makeFFRWeekTable()
+  }
+  if(type == "hazard") {
+    dxChart::makeFieldChart(
+      base64 = FALSE, 
+      lineSymbols = FALSE, 
+      useCustomize = FALSE, 
+      df = dxChart::hazard_accumulate_sample, 
+      xCol="SVC_MON_NEW_ind_cal",
+      yCol="svc_rate_value",
+      groupCol = "CALC_PROD_DT_ind",
+      xType = "category",useLeftlabels = FALSE, yRightUse = FALSE, tickIntervalX = 1, useLinelabels = TRUE
+      )
+  }
 }
