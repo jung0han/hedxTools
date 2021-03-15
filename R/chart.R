@@ -276,7 +276,7 @@ makeFieldChart <- function(
       labels = list(
         point = list(x = top_label_x, y = y_max, xAxis = 0, yAxis = 0),
         borderWidth=0,
-        text = paste(ffr_week[['last']][['value']], ffr_week[['last']][['date']], "→")
+        text = paste(ffr_week[['last']][['weeklabelValue']], ffr_week[['last']][['weeklabelDate']], "→")
       )
     ) %>% highcharter::hc_add_annotation(
       draggable = FALSE,
@@ -297,7 +297,7 @@ makeFieldChart <- function(
       labels = list(
         point = list(x = top_label_x, y = y_max, xAxis = 0, yAxis = 0),
         borderWidth=0,
-        text = paste(ffr_week[['this']][['value']], ffr_week[['this']][['date']])
+        text = paste(ffr_week[['this']][['weeklabelValue']], ffr_week[['this']][['weeklabelDate']])
       )
     )
   }
