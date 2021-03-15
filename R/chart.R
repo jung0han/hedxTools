@@ -19,6 +19,8 @@
 #' @param linelabelSignals 라인라벨의 시그널 색상,
 #'  기본값 = c("red", "green", "grey", "green", "red"),
 #' @param linelabelSymbols 라인라벨 시그널의 모양, 기본값 = c("", "", "●", "", "●"),
+#' @param weeklabelDate 주간 실적 라벨에 표기될 날짜, 기본값 = c("(3/4)", "(3/11)")
+#' @param weeklabelValue 주간 실적 라벨에 표기될 수치 : c(지난주 실적, 금주 실적), 기본겂 = c(1.06, 1.04)
 #' @param lineSymbols 라인의 심볼 : circle, diamond 또는 square ,
 #'  기본값 = c('circle', 'circle', 'diamond', 'diamond', 'square'),
 #' @param lineSymbolColors 라인 심볼의 색상으로 설정하지 않으면 라인 색상을 따라감,
