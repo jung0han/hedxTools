@@ -370,18 +370,19 @@ base64ToHtml <- function(base64Chart = makeFieldChart()) {
 #'
 #' @param preset ffr, hazard
 #' @param df 데이터프레임(group, x축 좌표(문자), y축 좌표(숫자), 기본값 = NULL
+#' @param title 타이틀 문구, 기본값 = ""
 #' @param base64 base64 이미지 또는 htmlwidget object 출력을 선택, 기본값 = TRUE
 #'
 #' @return base64 str or htmlwidget object
 #' @rdname makePresetChart
 #' @export
 #'
-makePresetChart <- function(preset = "ffr", df = NaN, base64 = TRUE) {
+makePresetChart <- function(preset = "ffr", df = NaN, title = "", base64 = TRUE) {
   if(preset == "ffr") {
     if(is.na(df)) {
       df <- dxChart::ffr_fdr_sample
     }
-    dxChart <- dxChart::makeFieldChart(base64 = base64)
+    dxChart <- dxChart::makeFieldChart(titleText = title, base64 = base64)
     return(dxChart)
   }
   if(preset == "hazard") {
@@ -393,6 +394,7 @@ makePresetChart <- function(preset = "ffr", df = NaN, base64 = TRUE) {
       useCustomize = FALSE,
       xLeftMargin = 0,
       df = df,
+      titleText = title,
       yLeftText = "Hazard (%)",
       xCol="SVC_MON_NEW_ind_cal",
       yCol="svc_rate_value",
