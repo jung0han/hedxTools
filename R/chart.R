@@ -447,11 +447,40 @@ checkWeekSignal <- function(last = 1, this = 1) {
   return(signal)
 }
 
-
-checkMonthSignal <- function(df = dxChart::ffr_fdr_sample) {
+#' Check Week Signal
+#'
+#' 지난주 금주 실적 시그널 확인 함수
+#'
+#' @param last 지난주 실적, 기본값 = 1
+#' @param this 금주 실적, 기본값 = 1
+#'
+#' @return color str
+#' @rdname checkSignal
+#' @export
+#'
+checkSignal <- function(df = dxChart::ffr_fdr_sample) {
   df <- dxChart::ffr_fdr_sample
-  df <- dplyr::rename(df, yCol = "value", xCol = "PURC_MON_NEW", group = "group")
-  df <- df[!is.na(df$value),]
+  df <- df[df['group'] == "'21(R)",]
+
+  df <- df %>% dplyr::rename(yCol = "value", xCol = "PURC_MON_NEW", group = "group") %>%
+    dplyr::filter(!is.na(yCol)) %>%
+    dplyr::arrange(desc(xCol))
+
+  target <- 2
+  test <- c(5, 4, 3, 2, 1)
+
+  compare_continuity <- function(df, times) {
+    if(length(df)<times + 1) {
+      message("기간보다 비교할 값이 작습니다.")
+    }
+    result <- TRUE
+    for(index in 1:times) {
+      result <- result && df[index]>df[index + 1]
+    }
+    return(result)
+  }
+
+  te <- compare_continuity(test, 4)
 
   # df_group <- split(df, df$group)
   # df_value <- df_group$L3M[!is.na(df_group$L3M$value),] %>% arrange(xCol)
