@@ -9,7 +9,7 @@
 #' @param groupCol 데이터 Group이 위치한 행, 기본값 = "group"
 #' @param xType x축의 타입 : "datetime" 또는 "category", 기본값 = "datetime"
 #' @param xLeftMargin x축 좌측의 여백값으로 타입에 따라 값을 변경 해야함, 기본값 = 0.15
-#' @param yMaxRate y축 좌표의 최대값 대비 y축의 최대값 비율, 기본값 = 1.4
+#' @param yMax y축의 최대값, 기본값 = FALSE
 #' @param yLeftText y축 좌측 문구, 기본값 = "FFR(%)"
 #' @param yRightText y축 우측 문구, 기본값 = "FDR(%)"
 #' @param lineWidth 라인 두께, 기본값 = 1
@@ -61,13 +61,15 @@ makeFieldChart <- function(
   groupCol = "group",
   xType = "datetime",
   xLeftMargin = 0.15,
-  yMaxRate = 1.4,
+  yMax = FALSE,
+  y2Max = FALSE,
   yLeftText = "FFR(%)",
   yRightText = "FDR(%)",
   lineWidth = 1,
   tickIntervalY = 0.5,
   tickIntervalX = 30 * 24 * 3600 * 1000,
   useCustomize = TRUE,
+  yAxis = c(0, 0, 1, 1, 1), #
   linelabelSignals = c("red", "green", "grey", "green", "red"),
   linelabelSymbols = c("", "", "●", "", "●"),
   weeklabelDate = c("(3/4)", "(3/11)"),
@@ -107,7 +109,7 @@ makeFieldChart <- function(
   df <- dplyr::rename(df, "yCol" = yCol, "xCol" = xCol, "group" = groupCol)
 
   # x 좌표는 소수점 둘째자리로 반올림, y좌표는 datetime으로 변경
-  df["yCol"] <- round(df["yCol"], digit=2)
+  df["yCol"] <- round(df["yCol"], digit=3)
   if(xType == "datetime") {
     df["xCol"] <- as.Date(paste0(df[["xCol"]],1),"%Y%m%d")
   }
@@ -117,25 +119,31 @@ makeFieldChart <- function(
   unique_group <- sort(unique(df$group))
 
   # y축 최대값을 정하기 위해 NA를 제외한 value의 최대값을 구하고 1.4를 곱함
-  y_max <- max(df$yCol[!is.na(df$yCol)]) * yMaxRate
+  y_max <- ifelse(yMax, yMax, max(df$yCol[!is.na(df$yCol)]) * 1.4)
+
+  y2_max <- ifelse(y2Max, y2Max, y_max)
 
   # 주간 실적의 시그널과 라벨을 구하기 위한 데이터 프레임을 만듬
   desc <- c("last", "this")
 
+  # 금주, 지난주 날짜와 실적을 dataframe으로 만들고 desc를 기준으로 group을 나눠줌
   ffr_week <- data.frame(desc, weeklabelDate, weeklabelValue)
   ffr_week <- split(ffr_week, ffr_week$desc)
 
+  # 금주, 지난주 실적을 기준으로 signal을 구해줌
   ffr_signal <- dxChart::checkWeekSignal(
-    ffr_week[['last']][['weeklabelValue']],
-    ffr_week[['this']][['weeklabelValue']]
+    ffr_week$last[['weeklabelValue']],
+    ffr_week$this[['weeklabelValue']]
     )
 
-  #
+  # x축의 가장 처음 좌표를 구해줌
   label_x <- ifelse(xType == "datetime", highcharter::datetime_to_timestamp(df[["xCol"]][1]), 1)
+
+  # x축의 가장 마지막 좌표를 주해줌
   top_label_x <- ifelse(
     xType == "datetime",
     highcharter::datetime_to_timestamp(df[["xCol"]][length(df[["xCol"]])]),
-    length(unique_group)
+    length(unique(df$xCol))
     )
 
   label_y <- c()
@@ -148,6 +156,7 @@ makeFieldChart <- function(
   }
 
   if(!useCustomize) {
+    yAxis = 0
     linelabelSignals = FALSE
     linelabelSymbols = FALSE
     groupColors = FALSE
@@ -159,6 +168,7 @@ makeFieldChart <- function(
   label_df <- data.frame(
     label_text,
     label_y,
+    yAxis,
     linelabelSignals,
     linelabelSymbols,
     groupColors,
@@ -172,7 +182,7 @@ makeFieldChart <- function(
   # 옵션값을 가지고 라인 좌측 라벨 구조 생성
   for(group in label_df$label_text) {
     label[[length(label)+1]] <- list(
-      point = list(x = label_x, y = label_df[label_df$label_text == group,][['label_y']], xAxis = 0, yAxis = 0),
+      point = list(x = label_x, y = label_df[label_df$label_text == group,][['label_y']], xAxis = 0, yAxis = label_df[label_df$label_text == group,][['yAxis']]),
       borderWidth=0,
       text = paste0(
         "<span style='color:",
@@ -203,10 +213,9 @@ makeFieldChart <- function(
       title = list(text = yRightText),
       visible = yRightUse,
       min=0,
-      max=y_max,
+      max=y2_max,
       endOnTick=FALSE,
       gridLineColor="",
-      showLastLabel = FALSE,
       opposite = TRUE
       )
   ) %>%
@@ -304,6 +313,7 @@ makeFieldChart <- function(
     )
   }
 
+  # group별 데이터, 라벨 이름, 마커 옵션을 넣어줌
   for(group in label_df$label_text) {
     dxChart <- dxChart %>%
       highcharter::hc_add_series(
@@ -323,9 +333,8 @@ makeFieldChart <- function(
           color = label_df[label_df$label_text == group,][['groupColors']]
           ),
         label = list(enabled = useLinelabels, style = list(fontWeight = "nomal")),
-        color=label_df[label_df$label_text == group,][['groupColors']]
-        ,
-        yAxis=0,
+        color = label_df[label_df$label_text == group,][['groupColors']],
+        yAxis = label_df[label_df$label_text == group,][['yAxis']],
         type = "line"
         )
   }
@@ -436,4 +445,36 @@ checkWeekSignal <- function(last = 1, this = 1) {
   }
   print(paste("Week signal :", signal))
   return(signal)
+}
+
+
+checkMonthSignal <- function(df = dxChart::ffr_fdr_sample) {
+  df <- dxChart::ffr_fdr_sample
+  df <- dplyr::rename(df, yCol = "value", xCol = "PURC_MON_NEW", group = "group")
+  df <- df[!is.na(df$value),]
+
+  # df_group <- split(df, df$group)
+  # df_value <- df_group$L3M[!is.na(df_group$L3M$value),] %>% arrange(xCol)
+  # df_month <- split(df_value, df_value$xCol)
+
+  unique_group <- sort(unique(df$group))
+  target_group <- c("'21(R)")
+  unique_x_col <- sort(unique(df$xCol))
+
+
+
+  for(group in unique_group) {
+    df <- df[df['group'] == "L6M",]
+    for(x_col in unique_x_col) {
+
+    }
+  }
+
+
+  if(length(df_month)>1) {
+    for(index in length(df_month):2) {
+      compareWithLastMonth <- df_month[[index]]$value - df_month[[index-1]]$value
+      df_month[[index]]$rise <- ifelse(compareWithLastMonth>0, TRUE, FALSE)
+    }
+  }
 }
