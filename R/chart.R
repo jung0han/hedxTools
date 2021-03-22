@@ -447,63 +447,72 @@ checkWeekSignal <- function(last = 1, this = 1) {
   return(signal)
 }
 
-#' Check Week Signal
+#' Check Signal
 #'
-#' 지난주 금주 실적 시그널 확인 함수
+#' 시그널 확인 함수
 #'
-#' @param last 지난주 실적, 기본값 = 1
-#' @param this 금주 실적, 기본값 = 1
+#' @param df group, x축 좌표, y축 좌표 구조로 대상 그룹으로 Filtering 후 입력 필요
+#' @param target 목표값으로 L3M의 경우 전년 실적 입력 필요
+#' @param type 시그널을 확인하고자 하는 차트 종류 ffr, L6M 또는 L3M
 #'
 #' @return color str
 #' @rdname checkSignal
 #' @export
 #'
-checkSignal <- function(df = dxChart::ffr_fdr_sample) {
-  df <- dxChart::ffr_fdr_sample
-  df <- df[df['group'] == "'21(R)",]
+checkSignal <- function(df, target, type) {
 
-  df <- df %>% dplyr::rename(yCol = "value", xCol = "PURC_MON_NEW", group = "group") %>%
-    dplyr::filter(!is.na(yCol)) %>%
-    dplyr::arrange(desc(xCol))
-
-  target <- 2
-  test <- c(5, 4, 3, 2, 1)
+  df <- df %>% dplyr::filter(!is.na(yCol)) %>% dplyr::arrange(desc(xCol))
 
   compare_continuity <- function(df, times) {
-    if(length(df)<times + 1) {
-      message("기간보다 비교할 값이 작습니다.")
+    df <- df$yCol
+    if(length(df) < times + 1) {
+      message("비교할 대상이 ", times, "주기 보다 짧습니다.")
     }
     result <- TRUE
     for(index in 1:times) {
-      result <- result && df[index]>df[index + 1]
+      result <- result && df[index] > df[index + 1]
     }
     return(result)
   }
 
-  te <- compare_continuity(test, 4)
-
-  # df_group <- split(df, df$group)
-  # df_value <- df_group$L3M[!is.na(df_group$L3M$value),] %>% arrange(xCol)
-  # df_month <- split(df_value, df_value$xCol)
-
-  unique_group <- sort(unique(df$group))
-  target_group <- c("'21(R)")
-  unique_x_col <- sort(unique(df$xCol))
-
-
-
-  for(group in unique_group) {
-    df <- df[df['group'] == "L6M",]
-    for(x_col in unique_x_col) {
-
+  compare_target <- function(df, target, percent) {
+    target <- target %>% dplyr::filter(xCol == df$xCol[1])
+    if(df$yCol[1] > target$yCol * percent / 100) {
+      return(TRUE)
+    } else {
+      return(FALSE)
     }
   }
 
-
-  if(length(df_month)>1) {
-    for(index in length(df_month):2) {
-      compareWithLastMonth <- df_month[[index]]$value - df_month[[index-1]]$value
-      df_month[[index]]$rise <- ifelse(compareWithLastMonth>0, TRUE, FALSE)
+  if(type == "ffr") {
+    if(df$yCol[1] < 1.5) {
+      signal <- "white"
+    } else if(compare_target(df, target, 95) || compare_continuity(df, 3)) {
+      signal <- "red"
+    } else if(!compare_target(df, target, 100)) {
+      signal <- "green"
+    } else if(!compare_target(df, target, 95) || compare_continuity(df, 2)) {
+      signal <- "yellow"
     }
   }
+
+  if(type == "L6M") {
+    if(compare_continuity(df, 1)) {
+      signal <- "red"
+    } else {
+      signal <- "green"
+    }
+  }
+
+  if(type == "L3M") {
+    if(compare_continuity(df, 1) && compare_target(df, target, 100)) {
+      signal <- "red"
+    } else if(compare_continuity(df, 1) || compare_target(df, target, 100)) {
+      signal <- "yellow"
+    } else {
+      signal <- "green"
+    }
+  }
+
+  return(signal)
 }

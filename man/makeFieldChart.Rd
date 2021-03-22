@@ -12,13 +12,15 @@ makeFieldChart(
   groupCol = "group",
   xType = "datetime",
   xLeftMargin = 0.15,
-  yMaxRate = 1.4,
+  yMax = FALSE,
+  y2Max = FALSE,
   yLeftText = "FFR(\%)",
   yRightText = "FDR(\%)",
   lineWidth = 1,
   tickIntervalY = 0.5,
   tickIntervalX = 30 * 24 * 3600 * 1000,
   useCustomize = TRUE,
+  yAxis = c(0, 0, 1, 1, 1),
   linelabelSignals = c("red", "green", "grey", "green", "red"),
   linelabelSymbols = c("", "", "●", "", "●"),
   weeklabelDate = c("(3/4)", "(3/11)"),
@@ -62,7 +64,7 @@ makeFieldChart(
 
 \item{xLeftMargin}{x축 좌측의 여백값으로 타입에 따라 값을 변경 해야함, 기본값 = 0.15}
 
-\item{yMaxRate}{y축 좌표의 최대값 대비 y축의 최대값 비율, 기본값 = 1.4}
+\item{yMax}{y축의 최대값, 기본값 = FALSE}
 
 \item{yLeftText}{y축 좌측 문구, 기본값 = "FFR(\%)"}
 
@@ -79,6 +81,10 @@ makeFieldChart(
 기본값 = c("red", "green", "grey", "green", "red"),}
 
 \item{linelabelSymbols}{라인라벨 시그널의 모양, 기본값 = c("", "", "●", "", "●"),}
+
+\item{weeklabelDate}{주간 실적 라벨에 표기될 날짜, 기본값 = c("(3/4)", "(3/11)")}
+
+\item{weeklabelValue}{주간 실적 라벨에 표기될 수치 : c(지난주 실적, 금주 실적), 기본겂 = c(1.06, 1.04)}
 
 \item{lineSymbols}{라인의 심볼 : circle, diamond 또는 square ,
 기본값 = c('circle', 'circle', 'diamond', 'diamond', 'square'),}
