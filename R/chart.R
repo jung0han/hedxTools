@@ -69,20 +69,21 @@ makeFieldChart <- function(
   tickIntervalY = 0.5,
   tickIntervalX = 30 * 24 * 3600 * 1000,
   useCustomize = TRUE,
-  yAxis = c(0, 0, 1, 1, 1), #
-  linelabelSignals = c("red", "green", "grey", "green", "red"),
-  linelabelSymbols = c("", "", "●", "", "●"),
+  yAxis = c(0, 0, 0, 1, 1, 1), #
+  linelabelSignals = c("", "", "", "green", "", "green"),
+  linelabelSymbols = c("", "", "", "●", "", "●"),
   weeklabelDate = c("(3/4)", "(3/11)"),
   weeklabelValue = c(1.06, 1.04),
-  lineSymbols = c('circle', 'circle', 'diamond', 'diamond', 'square'),
-  lineSymbolColors = c('white', '', '', '', 'white'),
+  lineSymbols = c('circle', 'circle', 'circle', 'diamond', 'diamond', 'square'),
+  lineSymbolColors = c('white', '', 'white', '', '', 'white'),
   markerHover = TRUE,
-  groupColors = c("#000000", "#FF0000", "#FF00FF", "#7F7F7F", "#FFC000"),
-  useDatalabels = c(TRUE, TRUE, TRUE, FALSE, TRUE),
+  groupColors = c("#000000", "#FF0000", "#008000", "#FF00FF", "#7F7F7F", "#FFC000"),
+  useDatalabels = c(TRUE, TRUE, TRUE, TRUE, FALSE, TRUE),
   yRightUse = TRUE,
   useLeftlabels = TRUE,
   useLinelabels = FALSE,
   useWeeklabels = TRUE,
+  titleSignal = "green", #
   fontFamily = "LG스마트체 Regular",
   titleText = "Global OLED (Product)",
   titleFontWeight = 'bold',
@@ -149,12 +150,12 @@ makeFieldChart <- function(
   label_y <- c()
   label_text <- c()
 
-  for(group in unique_group) {
-    group <- as.character(group)
-    label_text <- c(label_text, as.character(df_group[[as.character(group)]][["group"]][1]))
-    label_y <- c(label_y, df_group[[group]][["yCol"]][1])
+  for(group_name in unique_group) {
+    group_name <- as.character(group_name)
+    value <- df %>% dplyr::filter(!is.na(yCol), group == group_name) %>% dplyr::select(yCol)
+    label_text <- c(label_text, as.character(df_group[[as.character(group_name)]][["group"]][1]))
+    label_y <- c(label_y, value[1,])
   }
-
   if(!useCustomize) {
     yAxis = 0
     linelabelSignals = FALSE
@@ -249,7 +250,7 @@ makeFieldChart <- function(
     ) %>%
     highcharter::hc_title(
       text = paste0("<span style='color:",
-                    ffr_signal,
+                    titleSignal,
                     ";'>●</span> ",
                     titleText),
       margin = 10, align = "center",
@@ -459,9 +460,9 @@ checkWeekSignal <- function(last = 1, this = 1) {
 #' @rdname checkSignal
 #' @export
 #'
-checkSignal <- function(df, target, type) {
+checkSignal <- function(df, target, type, yCol = "value", xCol = "PURC_MON_NEW", groupCol = "group") {
 
-  df <- df %>% dplyr::filter(!is.na(yCol)) %>% dplyr::arrange(desc(xCol))
+  df <- df %>% dplyr::rename(yCol = yCol, xCol = xCol, group = groupCol) %>% dplyr::filter(!is.na(yCol)) %>% dplyr::arrange(desc(xCol))
 
   compare_continuity <- function(df, times) {
     df <- df$yCol
@@ -476,7 +477,10 @@ checkSignal <- function(df, target, type) {
   }
 
   compare_target <- function(df, target, percent) {
-    target <- target %>% dplyr::filter(xCol == df$xCol[1])
+    target <- target %>%
+      dplyr::rename(yCol = yCol, xCol =xCol, group = groupCol) %>%
+      dplyr::filter(xCol == df$xCol[1])
+
     if(df$yCol[1] > target$yCol * percent / 100) {
       return(TRUE)
     } else {
@@ -486,30 +490,39 @@ checkSignal <- function(df, target, type) {
 
   if(type == "ffr") {
     if(df$yCol[1] < 1.5) {
+      message("FFR : 1.5% 미만")
       signal <- "white"
     } else if(compare_target(df, target, 95) || compare_continuity(df, 3)) {
+      message("FFR : 목표대비 95%↓, 3개월 연속 악화")
       signal <- "red"
     } else if(!compare_target(df, target, 100)) {
+      message("FFR : 목표대비 100%↑")
       signal <- "green"
     } else if(!compare_target(df, target, 95) || compare_continuity(df, 2)) {
+      message("FFR : 목표대비 95%↑, 2개월 연속 악화")
       signal <- "yellow"
     }
   }
 
   if(type == "L6M") {
     if(compare_continuity(df, 1)) {
+      message("L6M : 전월대비 악화")
       signal <- "red"
     } else {
+      message("L6M : 전월대비 개선")
       signal <- "green"
     }
   }
 
   if(type == "L3M") {
     if(compare_continuity(df, 1) && compare_target(df, target, 100)) {
+      message("L3M : 전월대비 악화 및 전년 동기대비 악화")
       signal <- "red"
     } else if(compare_continuity(df, 1) || compare_target(df, target, 100)) {
+      message("L3M : 전월대비 악화, 전년 동기대비 악화")
       signal <- "yellow"
     } else {
+      message("L6M : 전월대비 개선 및 전년 동기대비 개선")
       signal <- "green"
     }
   }
