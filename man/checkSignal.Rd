@@ -4,7 +4,14 @@
 \alias{checkSignal}
 \title{Check Signal}
 \usage{
-checkSignal(df, target, type)
+checkSignal(
+  df,
+  target,
+  type,
+  yCol = "value",
+  xCol = "PURC_MON_NEW",
+  groupCol = "group"
+)
 }
 \arguments{
 \item{df}{group, x축 좌표, y축 좌표 구조로 대상 그룹으로 Filtering 후 입력 필요}

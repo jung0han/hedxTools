@@ -9,30 +9,34 @@
 #' @param groupCol 데이터 Group이 위치한 행, 기본값 = "group"
 #' @param xType x축의 타입 : "datetime" 또는 "category", 기본값 = "datetime"
 #' @param xLeftMargin x축 좌측의 여백값으로 타입에 따라 값을 변경 해야함, 기본값 = 0.15
-#' @param yMax y축의 최대값, 기본값 = FALSE
+#' @param yMax y축의 최대값으로 설정하지 않으면 최대 값의 140%로 설정됨, 기본값 = FALSE
+#' @param y2Max 우측 y축의 최대값으로 설정하지 않으면 최대 값의 140%로 설정됨, 기본값 = FALSE
 #' @param yLeftText y축 좌측 문구, 기본값 = "FFR(%)"
 #' @param yRightText y축 우측 문구, 기본값 = "FDR(%)"
 #' @param lineWidth 라인 두께, 기본값 = 1
 #' @param tickIntervalY y축 라벨 표기 간격, 기본값 = 0.5
-#' @param tickIntervalX x축 라벨 표기 간격으로 datetime 타입의 경우 초단위로 설정,
+#' @param tickIntervalX x축 라벨 표기 간격으로 datetime 타입의 경우 초단위로 설정
+#' @param useCustomize 라인 색상, Symbol 등 사용자 지정 속성을 적용할지 여부, 기본값 = TRUE
+#' @param yAxis 각 라인별 y축 선택 0:좌측, 1:우측, 기본값 = yAxis = c(0, 0, 0, 1, 1, 1)
 #'  기본값 = 30 * 24 * 3600 * 1000
 #' @param linelabelSignals 라인라벨의 시그널 색상,
-#'  기본값 = c("red", "green", "grey", "green", "red"),
-#' @param linelabelSymbols 라인라벨 시그널의 모양, 기본값 = c("", "", "●", "", "●"),
+#'  기본값 = c("", "", "", "green", "", "green"),
+#' @param linelabelSymbols 라인라벨 시그널의 모양, 기본값 = c("", "", "", "●", "", "●"),
 #' @param weeklabelDate 주간 실적 라벨에 표기될 날짜, 기본값 = c("(3/4)", "(3/11)")
 #' @param weeklabelValue 주간 실적 라벨에 표기될 수치 : c(지난주 실적, 금주 실적), 기본겂 = c(1.06, 1.04)
 #' @param lineSymbols 라인의 심볼 : circle, diamond 또는 square ,
-#'  기본값 = c('circle', 'circle', 'diamond', 'diamond', 'square'),
+#'  기본값 = c('circle', 'circle', 'circle', 'diamond', 'diamond', 'square'),
 #' @param lineSymbolColors 라인 심볼의 색상으로 설정하지 않으면 라인 색상을 따라감,
-#'  기본값 = c('white', '', '', '', 'white'),
+#'  기본값 = c('white', '', 'white', '', '', 'white'),
 #' @param markerHover 라인에 마우스를 올렸을 때 라인 심볼의 표시 여부 : TRUE 또는 FALSE, 기본값 = TRUE
 #' @param groupColors 그룹별 라인과 라인라벨의 색상 : 색상코드 또는 FALSE,
-#'  기본값 = c("#000000", "#FF0000", "#FF00FF", "#7F7F7F", "#FFC000")
-#' @param useDatalabels 데이터 라벨의 표시 여부 : TRUE 또는 FALSE, 기본값 = c(TRUE, TRUE, TRUE, FALSE, TRUE),
+#'  기본값 = c("#000000", "#FF0000", "#008000", "#FF00FF", "#7F7F7F", "#FFC000"),
+#' @param useDatalabels 데이터 라벨의 표시 여부 : TRUE 또는 FALSE, 기본값 = c(TRUE, TRUE, TRUE, TRUE, FALSE, TRUE),
 #' @param yRightUse 우측 Y축을 사용할지 여부, 기본값 = TRUE
 #' @param useLeftlabels 좌측 라벨을 사용할지 여부, 기본값 = TRUE
 #' @param useLinelabels 라인별 라벨을 사용할지 여부, 기본값 = FALSE
 #' @param useWeeklabels 주간 라벨을 사용할지 여부, 기본값 = TRUE
+#' @param titleSignal Title 좌측의 시그널 색상, 기본값 = "green"
 #' @param fontFamily 타이틀, 라벨, 데이터라벨의 폰트, 기본값 = "LG스마트체 Regular"
 #' @param titleText 타이틀 문구, 기본값 = "Global OLED (Product)"
 #' @param titleFontWeight 타이틀 폰트 스타일 : 'normal' 또는 bold', 기본값 = 'bold'
@@ -125,17 +129,17 @@ makeFieldChart <- function(
   y2_max <- ifelse(y2Max, y2Max, y_max)
 
   # 주간 실적의 시그널과 라벨을 구하기 위한 데이터 프레임을 만듬
-  desc <- c("last", "this")
 
   # 금주, 지난주 날짜와 실적을 dataframe으로 만들고 desc를 기준으로 group을 나눠줌
-  ffr_week <- data.frame(desc, weeklabelDate, weeklabelValue)
-  ffr_week <- split(ffr_week, ffr_week$desc)
+  ffr_week <- data.frame(weeklabelDate, weeklabelValue)
+
 
   # 금주, 지난주 실적을 기준으로 signal을 구해줌
   ffr_signal <- dxChart::checkWeekSignal(
-    ffr_week$last[['weeklabelValue']],
-    ffr_week$this[['weeklabelValue']]
+    ffr_week[1,"weeklabelValue"],
+    ffr_week[2,"weeklabelValue"]
     )
+
 
   # x축의 가장 처음 좌표를 구해줌
   label_x <- ifelse(xType == "datetime", highcharter::datetime_to_timestamp(df[["xCol"]][1]), 1)
@@ -176,10 +180,12 @@ makeFieldChart <- function(
     useDatalabels,
     lineSymbols,
     lineSymbolColors
-    )
-  print(label_df)
-  label <- list()
+    ) %>% dplyr::filter(!is.na(label_y))
 
+  # label_df <- label_df[!is.na(label_df$label_y),]
+  print(label_df)
+
+  label <- list()
   # 옵션값을 가지고 라인 좌측 라벨 구조 생성
   for(group in label_df$label_text) {
     label[[length(label)+1]] <- list(
@@ -257,6 +263,7 @@ makeFieldChart <- function(
       style = list(fontFamily = fontFamily, fontWeight = titleFontWeight, useHTML = TRUE, fontSize = titleFontSize)
     )
 
+
   if(useLeftlabels) {
     dxChart <- dxChart %>% highcharter::hc_add_annotation(
       labelOptions = list(
@@ -286,9 +293,9 @@ makeFieldChart <- function(
         backgroundColor = "white"
       ),
       labels = list(
-        point = list(x = top_label_x, y = y_max, xAxis = 0, yAxis = 0),
+        point = list(x = top_label_x, y = y_max * 0.965, xAxis = 0, yAxis = 0),
         borderWidth=0,
-        text = paste(ffr_week[['last']][['weeklabelValue']], ffr_week[['last']][['weeklabelDate']], "→")
+        text = paste(ffr_week[1, 'weeklabelValue'], ffr_week[1, 'weeklabelDate'], "→")
       )
     ) %>% highcharter::hc_add_annotation(
       draggable = FALSE,
@@ -307,9 +314,9 @@ makeFieldChart <- function(
         backgroundColor = rgb(217/255,217/255,217/255)
       ),
       labels = list(
-        point = list(x = top_label_x, y = y_max, xAxis = 0, yAxis = 0),
+        point = list(x = top_label_x, y = y_max * 0.965, xAxis = 0, yAxis = 0),
         borderWidth=0,
-        text = paste(ffr_week[['this']][['weeklabelValue']], ffr_week[['this']][['weeklabelDate']])
+        text = paste(ffr_week[2, 'weeklabelValue'], ffr_week[2, 'weeklabelDate'])
       )
     )
   }
@@ -480,8 +487,9 @@ checkSignal <- function(df, target, type, yCol = "value", xCol = "PURC_MON_NEW",
     target <- target %>%
       dplyr::rename(yCol = yCol, xCol =xCol, group = groupCol) %>%
       dplyr::filter(xCol == df$xCol[1])
-
-    if(df$yCol[1] > target$yCol * percent / 100) {
+    if(is.na(target$yCol)) {
+      return(FALSE)
+    } else if(df$yCol[1] > target$yCol * percent / 100) {
       return(TRUE)
     } else {
       return(FALSE)

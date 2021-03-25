@@ -20,20 +20,21 @@ makeFieldChart(
   tickIntervalY = 0.5,
   tickIntervalX = 30 * 24 * 3600 * 1000,
   useCustomize = TRUE,
-  yAxis = c(0, 0, 1, 1, 1),
-  linelabelSignals = c("red", "green", "grey", "green", "red"),
-  linelabelSymbols = c("", "", "●", "", "●"),
+  yAxis = c(0, 0, 0, 1, 1, 1),
+  linelabelSignals = c("", "", "", "green", "", "green"),
+  linelabelSymbols = c("", "", "", "●", "", "●"),
   weeklabelDate = c("(3/4)", "(3/11)"),
   weeklabelValue = c(1.06, 1.04),
-  lineSymbols = c("circle", "circle", "diamond", "diamond", "square"),
-  lineSymbolColors = c("white", "", "", "", "white"),
+  lineSymbols = c("circle", "circle", "circle", "diamond", "diamond", "square"),
+  lineSymbolColors = c("white", "", "white", "", "", "white"),
   markerHover = TRUE,
-  groupColors = c("#000000", "#FF0000", "#FF00FF", "#7F7F7F", "#FFC000"),
-  useDatalabels = c(TRUE, TRUE, TRUE, FALSE, TRUE),
+  groupColors = c("#000000", "#FF0000", "#008000", "#FF00FF", "#7F7F7F", "#FFC000"),
+  useDatalabels = c(TRUE, TRUE, TRUE, TRUE, FALSE, TRUE),
   yRightUse = TRUE,
   useLeftlabels = TRUE,
   useLinelabels = FALSE,
   useWeeklabels = TRUE,
+  titleSignal = "green",
   fontFamily = "LG스마트체 Regular",
   titleText = "Global OLED (Product)",
   titleFontWeight = "bold",
@@ -64,7 +65,9 @@ makeFieldChart(
 
 \item{xLeftMargin}{x축 좌측의 여백값으로 타입에 따라 값을 변경 해야함, 기본값 = 0.15}
 
-\item{yMax}{y축의 최대값, 기본값 = FALSE}
+\item{yMax}{y축의 최대값으로 설정하지 않으면 최대 값의 140\%로 설정됨, 기본값 = FALSE}
+
+\item{y2Max}{우측 y축의 최대값으로 설정하지 않으면 최대 값의 140\%로 설정됨, 기본값 = FALSE}
 
 \item{yLeftText}{y축 좌측 문구, 기본값 = "FFR(\%)"}
 
@@ -74,30 +77,34 @@ makeFieldChart(
 
 \item{tickIntervalY}{y축 라벨 표기 간격, 기본값 = 0.5}
 
-\item{tickIntervalX}{x축 라벨 표기 간격으로 datetime 타입의 경우 초단위로 설정,
+\item{tickIntervalX}{x축 라벨 표기 간격으로 datetime 타입의 경우 초단위로 설정}
+
+\item{useCustomize}{라인 색상, Symbol 등 사용자 지정 속성을 적용할지 여부, 기본값 = TRUE}
+
+\item{yAxis}{각 라인별 y축 선택 0:좌측, 1:우측, 기본값 = yAxis = c(0, 0, 0, 1, 1, 1)
 기본값 = 30 * 24 * 3600 * 1000}
 
 \item{linelabelSignals}{라인라벨의 시그널 색상,
-기본값 = c("red", "green", "grey", "green", "red"),}
+기본값 = c("", "", "", "green", "", "green"),}
 
-\item{linelabelSymbols}{라인라벨 시그널의 모양, 기본값 = c("", "", "●", "", "●"),}
+\item{linelabelSymbols}{라인라벨 시그널의 모양, 기본값 = c("", "", "", "●", "", "●"),}
 
 \item{weeklabelDate}{주간 실적 라벨에 표기될 날짜, 기본값 = c("(3/4)", "(3/11)")}
 
 \item{weeklabelValue}{주간 실적 라벨에 표기될 수치 : c(지난주 실적, 금주 실적), 기본겂 = c(1.06, 1.04)}
 
 \item{lineSymbols}{라인의 심볼 : circle, diamond 또는 square ,
-기본값 = c('circle', 'circle', 'diamond', 'diamond', 'square'),}
+기본값 = c('circle', 'circle', 'circle', 'diamond', 'diamond', 'square'),}
 
 \item{lineSymbolColors}{라인 심볼의 색상으로 설정하지 않으면 라인 색상을 따라감,
-기본값 = c('white', '', '', '', 'white'),}
+기본값 = c('white', '', 'white', '', '', 'white'),}
 
 \item{markerHover}{라인에 마우스를 올렸을 때 라인 심볼의 표시 여부 : TRUE 또는 FALSE, 기본값 = TRUE}
 
 \item{groupColors}{그룹별 라인과 라인라벨의 색상 : 색상코드 또는 FALSE,
-기본값 = c("#000000", "#FF0000", "#FF00FF", "#7F7F7F", "#FFC000")}
+기본값 = c("#000000", "#FF0000", "#008000", "#FF00FF", "#7F7F7F", "#FFC000"),}
 
-\item{useDatalabels}{데이터 라벨의 표시 여부 : TRUE 또는 FALSE, 기본값 = c(TRUE, TRUE, TRUE, FALSE, TRUE),}
+\item{useDatalabels}{데이터 라벨의 표시 여부 : TRUE 또는 FALSE, 기본값 = c(TRUE, TRUE, TRUE, TRUE, FALSE, TRUE),}
 
 \item{yRightUse}{우측 Y축을 사용할지 여부, 기본값 = TRUE}
 
@@ -106,6 +113,8 @@ makeFieldChart(
 \item{useLinelabels}{라인별 라벨을 사용할지 여부, 기본값 = FALSE}
 
 \item{useWeeklabels}{주간 라벨을 사용할지 여부, 기본값 = TRUE}
+
+\item{titleSignal}{Title 좌측의 시그널 색상, 기본값 = "green"}
 
 \item{fontFamily}{타이틀, 라벨, 데이터라벨의 폰트, 기본값 = "LG스마트체 Regular"}
 
