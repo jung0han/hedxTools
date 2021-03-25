@@ -88,7 +88,7 @@ makeFieldChart <- function(
   useLinelabels = FALSE,
   useWeeklabels = TRUE,
   titleSignal = "green", #
-  fontFamily = "LG스마트체 Regular",
+  fontFamily = "LG스마트체2.0 Light",
   titleText = "Global OLED (Product)",
   titleFontWeight = 'bold',
   titleFontSize = "16px",
@@ -284,8 +284,8 @@ makeFieldChart <- function(
     dxChart <- dxChart %>% highcharter::hc_add_annotation(
       draggable = FALSE,
       labelOptions = list(
-        y = 0,
-        x = -160,
+        y = -6,
+        x = -175,
         verticalAlign="middle",
         allowOverlap=TRUE,
         align="left",
@@ -293,14 +293,14 @@ makeFieldChart <- function(
         backgroundColor = "white"
       ),
       labels = list(
-        point = list(x = top_label_x, y = y_max * 0.965, xAxis = 0, yAxis = 0),
+        point = list(x = top_label_x, y = y_max, xAxis = 0, yAxis = 0),
         borderWidth=0,
         text = paste(ffr_week[1, 'weeklabelValue'], ffr_week[1, 'weeklabelDate'], "→")
       )
     ) %>% highcharter::hc_add_annotation(
       draggable = FALSE,
       labelOptions = list(
-        y = 0,
+        y = -8,
         x = 0,
         verticalAlign="middle",
         allowOverlap=TRUE,
@@ -314,7 +314,7 @@ makeFieldChart <- function(
         backgroundColor = rgb(217/255,217/255,217/255)
       ),
       labels = list(
-        point = list(x = top_label_x, y = y_max * 0.965, xAxis = 0, yAxis = 0),
+        point = list(x = top_label_x, y = y_max, xAxis = 0, yAxis = 0),
         borderWidth=0,
         text = paste(ffr_week[2, 'weeklabelValue'], ffr_week[2, 'weeklabelDate'])
       )
