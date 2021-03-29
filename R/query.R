@@ -93,11 +93,11 @@ queryFieldData <- function(date, period = 2, type = "prod", cal = "ffr", accNum 
         }
         
         # DB 커넥션 개수 확인 후 15개 이상일 경우 모두 종료
-        all_cons <- dbListConnections(MySQL())
+        all_cons <- DBI::dbListConnections(RMySQL::MySQL())
         message(paste("연결된 DB Connection :", length(all_cons)))
         if(length(all_cons) > 4) {
                 for(con in all_cons)
-                        +  dbDisconnect(con)
+                        +  DBI::dbDisconnect(con)
         }
 
         # 데이터베이스 연결하기 (updated)
@@ -107,7 +107,7 @@ queryFieldData <- function(date, period = 2, type = "prod", cal = "ffr", accNum 
                         dbname='cs_task_he',
                         host='10.185.152.89',
                         port = 3306,
-                        client.flag = CLIENT_MULTI_RESULTS)
+                        client.flag = RMySQL::CLIENT_MULTI_RESULTS)
 
         # DB character set을 utf-8 로 지정
         DBI::dbSendQuery(con, 'set character set "utf8"')
