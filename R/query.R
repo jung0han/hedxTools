@@ -73,7 +73,7 @@ queryFieldData <- function(date, period = 2, type = "prod", cal = "ffr", accNum 
         # Main function ----------------------------------------
 
         end_date <- as.Date(date)
-        start_date <- end_date - years(period + 1) - 1
+        start_date <- end_date - lubridate::years(period + 1) - 1
 
         start_month <- format(start_date, format="%Y%m")
         end_month <- format(end_date, format="%Y%m")
