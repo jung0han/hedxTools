@@ -252,7 +252,9 @@ makeFieldChart <- function(
     highcharter::hc_title(
       text = paste0("<span style='color:",
                     titleSignal,
-                    ";'>●</span> ",
+                    ";'>",
+                    ifelse(titleSignal == "black", "○", "●"),
+                    "</span> ",
                     titleText),
       margin = 10, align = "center",
       style = list(fontFamily = fontFamily, fontWeight = titleFontWeight, useHTML = TRUE, fontSize = titleFontSize)
@@ -494,7 +496,7 @@ checkSignal <- function(df, target, type, yCol = "value", xCol = "PURC_MON_NEW",
   if(type == "ffr") {
     if(df$yCol[1] < 1.5) {
       message("FFR : 1.5% 미만")
-      signal <- "#F0F0F0"
+      signal <- "black"
     } else if(compare_target(df, target, 95) || compare_continuity(df, 3)) {
       message("FFR : 목표대비 95%↓, 3개월 연속 악화")
       signal <- "red"
