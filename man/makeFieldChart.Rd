@@ -35,7 +35,7 @@ makeFieldChart(
   useLinelabels = FALSE,
   useWeeklabels = TRUE,
   titleSignal = "green",
-  fontFamily = "LG스마트체 Regular",
+  fontFamily = "LG스마트체2.0 Light",
   titleText = "Global OLED (Product)",
   titleFontWeight = "bold",
   titleFontSize = "16px",
