@@ -102,13 +102,8 @@ makeFieldChart <- function(
   imageWidth = 640,
   base64 = TRUE
 ) {
-  # =======================================================
-  # Utility functions
-  # =======================================================
 
-  # =======================================================
-  # Main function
-  # =======================================================
+  # Main function------------------------------------------
 
   setwd(wd)
   df <- dplyr::rename(df, "yCol" = yCol, "xCol" = xCol, "group" = groupCol)
@@ -499,7 +494,7 @@ checkSignal <- function(df, target, type, yCol = "value", xCol = "PURC_MON_NEW",
   if(type == "ffr") {
     if(df$yCol[1] < 1.5) {
       message("FFR : 1.5% 미만")
-      signal <- "white"
+      signal <- "#F0F0F0"
     } else if(compare_target(df, target, 95) || compare_continuity(df, 3)) {
       message("FFR : 목표대비 95%↓, 3개월 연속 악화")
       signal <- "red"

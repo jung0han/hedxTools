@@ -16,7 +16,7 @@
 
 Hazard 차트 작성 예시:
 
-    dxChart::makeFieldChart(
+    hedxTools::makeFieldChart(
         lineSymbols = FALSE,
         useCustomize = FALSE,
         xLeftMargin = 0,
@@ -37,20 +37,20 @@ Hazard 차트 작성 예시:
 
 FFR, Hazard 차트를 쉽게 만들 수 있는 Preset 함수:
 
-    dxChart::makePresetChart(preset = "ffr", title = "Global OLED (Module)", base64 = FALSE)
-    dxChart::makePresetChart(preset = "hazard", title = "Global OLED (Module)", base64 = FALSE)
+    hedxTools::makePresetChart(preset = "ffr", title = "Global OLED (Module)", base64 = FALSE)
+    hedxTools::makePresetChart(preset = "hazard", title = "Global OLED (Module)", base64 = FALSE)
 
 FFR, L6M, L3M 시그널 확인 및 반영 함수:
 
-    df <- dxChart::ffr_fdr_sample
+    df <- hedxTools::ffr_fdr_sample
 
-    ffr_signal <- dxChart::checkSignal(df[df['group'] == "'21(R)",], df[df['group'] == "'21(T)",], "ffr")
-    L6M_signal <- dxChart::checkSignal(df[df['group'] == "L6M",], ,"L6M")
-    L3M_signal <- dxChart::checkSignal(df[df['group'] == "L3M",], df[df['group'] == "L3M('20)",], "L3M")
+    ffr_signal <- hedxTools::checkSignal(df[df['group'] == "'21(R)",], df[df['group'] == "'21(T)",], "ffr")
+    L6M_signal <- hedxTools::checkSignal(df[df['group'] == "L6M",], ,"L6M")
+    L3M_signal <- hedxTools::checkSignal(df[df['group'] == "L3M",], df[df['group'] == "L3M('20)",], "L3M")
 
     linelabel_signals <- c("", "", "", L3M_signal, "", L6M_signal)
 
-    dxChart::makeFieldChart(
+    hedxTools::makeFieldChart(
         df = df,
         titleSignal = ffr_signal,
         linelabelSignals = linelabel_signals,
@@ -60,8 +60,8 @@ FFR, L6M, L3M 시그널 확인 및 반영 함수:
 
 차트를 base64 문자열로 리턴받고 html파일로 확인:
 
-    base64 <- dxChart::makePresetChart(preset = "ffr", title = "Global OLED (Module)")
-    dxChart::base64ToHtml(base64)
+    base64 <- hedxTools::makePresetChart(preset = "ffr", title = "Global OLED (Module)")
+    hedxTools::base64ToHtml(base64)
 
 ### Query 사용 방법
 
