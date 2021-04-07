@@ -3,7 +3,7 @@
 #' Field Chart를 만들기 위한 함수
 #'
 #' @param wd 작업 디렉토리, 기본값 = getwd()
-#' @param df 데이터프레임(group, x축 좌표(문자), y축 좌표(숫자), 기본값 = dxChart::ffr_fdr_sample
+#' @param df 데이터프레임(group, x축 좌표(문자), y축 좌표(숫자), 기본값 = hedxTools::ffr_fdr_sample
 #' @param yCol y축 좌표가 위치한 행, 기본값 = "value"
 #' @param xCol x축 좌표가 위치한 행, 기본값 = "PURC_MON_NEW"
 #' @param groupCol 데이터 Group이 위치한 행, 기본값 = "group"
@@ -59,7 +59,7 @@
 # 컬럼 정의 ----
 makeFieldChart <- function(
   wd = getwd(),
-  df = dxChart::ffr_fdr_sample,
+  df = hedxTools::ffr_fdr_sample,
   yCol = "value",
   xCol = "PURC_MON_NEW",
   groupCol = "group",
@@ -130,7 +130,7 @@ makeFieldChart <- function(
 
 
   # 금주, 지난주 실적을 기준으로 signal을 구해줌
-  ffr_signal <- dxChart::checkWeekSignal(
+  ffr_signal <- hedxTools::checkWeekSignal(
     ffr_week[1,"weeklabelValue"],
     ffr_week[2,"weeklabelValue"]
     )
@@ -396,16 +396,16 @@ base64ToHtml <- function(base64Chart = makeFieldChart()) {
 makePresetChart <- function(preset = "ffr", df = NaN, title = "", base64 = TRUE) {
   if(preset == "ffr") {
     if(is.na(df)) {
-      df <- dxChart::ffr_fdr_sample
+      df <- hedxTools::ffr_fdr_sample
     }
-    dxChart <- dxChart::makeFieldChart(titleText = title, base64 = base64)
+    dxChart <- hedxTools::makeFieldChart(titleText = title, base64 = base64)
     return(dxChart)
   }
   if(preset == "hazard") {
     if(is.na(df)) {
-      df <- dxChart::hazard_accumulate_sample
+      df <- hedxTools::hazard_accumulate_sample
     }
-    dxChart <- dxChart::makeFieldChart(
+    dxChart <- hedxTools::makeFieldChart(
       lineSymbols = FALSE,
       useCustomize = FALSE,
       xLeftMargin = 0,
