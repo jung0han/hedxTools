@@ -1,4 +1,4 @@
-# dxChart
+# hedxTools
 
 ### 설치 방법
 
@@ -31,6 +31,36 @@ Hazard 차트 작성 예시:
         yRightUse = FALSE,
         tickIntervalX = 1,
         useLinelabels = TRUE,
+        markerHover = FALSE,
+        base64 = FALSE
+    )
+
+Daily SVC 차트 작성 예시:
+
+    df <- hedxTools::svc_sellin %>% dplyr::mutate(group = "svc_sellin")
+
+    hedxTools::makeFieldChart(
+        yAxis = 0,
+        linelabelSignals = FALSE,
+        linelabelSymbols = FALSE,
+        groupColors = FALSE,
+        useDatalabels = FALSE,
+        lineSymbols = FALSE,
+        lineSymbolColors = FALSE,
+        xLeftMargin = 0,
+        df = df,
+        titleText = "Daily Hazard",
+        yLeftText = "SVC Count",
+        yRightText = "Sellin Count",
+        xCol="PROD_MON",
+        yCol="issue_cnt",
+        y2Max = 1500000,
+        barCol="sell_in",
+        groupCol = "group",
+        useLeftlabels = FALSE,
+        tickIntervalX = 1,
+        useWeeklabels = FALSE,
+        tickIntervalY = 10000,
         markerHover = FALSE,
         base64 = FALSE
     )

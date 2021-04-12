@@ -62,6 +62,7 @@ makeFieldChart <- function(
   df = hedxTools::ffr_fdr_sample,
   yCol = "value",
   xCol = "PURC_MON_NEW",
+  barCol = FALSE,
   groupCol = "group",
   xType = "datetime",
   xLeftMargin = 0.15,
@@ -106,7 +107,7 @@ makeFieldChart <- function(
   # Main function------------------------------------------
 
   setwd(wd)
-  df <- dplyr::rename(df, "yCol" = yCol, "xCol" = xCol, "group" = groupCol)
+  df <- dplyr::rename(df, "yCol" = yCol, "xCol" = xCol, "group" = groupCol, "barCol" = barCol)
 
   # x 좌표는 소수점 둘째자리로 반올림, y좌표는 datetime으로 변경
   df["yCol"] <- round(df["yCol"], digit=3)
@@ -342,6 +343,17 @@ makeFieldChart <- function(
         yAxis = label_df[label_df$label_text == group,][['yAxis']],
         type = "line"
         )
+
+    if(!is.na(barCol)) {
+      dxChart <- dxChart %>% 
+        highcharter::hc_add_series(
+          data = df_group[[group]],
+          name = paste(group, "Sales"),
+          yAxis = 1,
+          highcharter::hcaes(x = xCol, y = barCol),
+          type = "column"
+        )
+    }
   }
 
   if(base64 == TRUE) {

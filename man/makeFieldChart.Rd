@@ -6,9 +6,10 @@
 \usage{
 makeFieldChart(
   wd = getwd(),
-  df = dxChart::ffr_fdr_sample,
+  df = hedxTools::ffr_fdr_sample,
   yCol = "value",
   xCol = "PURC_MON_NEW",
+  barCol = FALSE,
   groupCol = "group",
   xType = "datetime",
   xLeftMargin = 0.15,
@@ -53,7 +54,7 @@ makeFieldChart(
 \arguments{
 \item{wd}{작업 디렉토리, 기본값 = getwd()}
 
-\item{df}{데이터프레임(group, x축 좌표(문자), y축 좌표(숫자), 기본값 = dxChart::ffr_fdr_sample}
+\item{df}{데이터프레임(group, x축 좌표(문자), y축 좌표(숫자), 기본값 = hedxTools::ffr_fdr_sample}
 
 \item{yCol}{y축 좌표가 위치한 행, 기본값 = "value"}
 
