@@ -62,7 +62,7 @@ makeFieldChart <- function(
   df = hedxTools::ffr_fdr_sample,
   yCol = "value",
   xCol = "PURC_MON_NEW",
-  barCol = FALSE,
+  barCol = NA,
   groupCol = "group",
   xType = "datetime",
   xLeftMargin = 0.15,
@@ -107,7 +107,9 @@ makeFieldChart <- function(
   # Main function------------------------------------------
 
   setwd(wd)
-  df <- dplyr::rename(df, "yCol" = yCol, "xCol" = xCol, "group" = groupCol, "barCol" = barCol)
+  df <- dplyr::rename(df, "yCol" = yCol, "xCol" = xCol, "group" = groupCol) 
+  
+  if(!is.na(barCol)) df <- dplyr::rename(df, "barCol" = barCol)
 
   # x 좌표는 소수점 둘째자리로 반올림, y좌표는 datetime으로 변경
   df["yCol"] <- round(df["yCol"], digit=3)
