@@ -13,6 +13,7 @@
 #' @param y2Max 우측 y축의 최대값으로 설정하지 않으면 최대 값의 140%로 설정됨, 기본값 = FALSE
 #' @param yLeftText y축 좌측 문구, 기본값 = "FFR(%)"
 #' @param yRightText y축 우측 문구, 기본값 = "FDR(%)"
+#' @param addName Group name 우측의 추가 문구, 기본값 = NULL
 #' @param lineWidth 라인 두께, 기본값 = 1
 #' @param tickIntervalY y축 라벨 표기 간격, 기본값 = 0.5
 #' @param tickIntervalX x축 라벨 표기 간격으로 datetime 타입의 경우 초단위로 설정
@@ -70,6 +71,7 @@ makeFieldChart <- function(
   y2Max = FALSE,
   yLeftText = "FFR(%)",
   yRightText = "FDR(%)",
+  addName = NULL,
   lineWidth = 1,
   tickIntervalY = 0.5,
   tickIntervalX = 30 * 24 * 3600 * 1000,
@@ -107,8 +109,8 @@ makeFieldChart <- function(
   # Main function------------------------------------------
 
   setwd(wd)
-  df <- dplyr::rename(df, "yCol" = yCol, "xCol" = xCol, "group" = groupCol) 
-  
+  df <- dplyr::rename(df, "yCol" = yCol, "xCol" = xCol, "group" = groupCol)
+
   if(!is.na(barCol)) df <- dplyr::rename(df, "barCol" = barCol)
 
   # x 좌표는 소수점 둘째자리로 반올림, y좌표는 datetime으로 변경
@@ -256,8 +258,14 @@ makeFieldChart <- function(
       text = paste0("<span style='color:",
                     titleSignal,
                     ";'>",
-                    ifelse(titleSignal == "black", "○", "●"),
-                    "</span> ",
+                    if(titleSignal == "black") {
+                      "○ "
+                    } else if(titleSignal == "white") {
+                      ""
+                    } else {
+                      "● "
+                    },
+                    "</span>",
                     titleText),
       margin = 10, align = "center",
       style = list(fontFamily = fontFamily, fontWeight = titleFontWeight, useHTML = TRUE, fontSize = titleFontSize)
@@ -284,8 +292,8 @@ makeFieldChart <- function(
     dxChart <- dxChart %>% highcharter::hc_add_annotation(
       draggable = FALSE,
       labelOptions = list(
-        y = -6,
-        x = -175,
+        y = -8,
+        x = -179,
         verticalAlign="middle",
         allowOverlap=TRUE,
         align="left",
@@ -326,7 +334,7 @@ makeFieldChart <- function(
     dxChart <- dxChart %>%
       highcharter::hc_add_series(
         data = df_group[[group]],
-        name = group,
+        name = paste(group, addName[1]),
         highcharter::hcaes(x = xCol, y = yCol),
         marker = list(
           enabled = ifelse(lineSymbols, TRUE, FALSE),
@@ -347,12 +355,13 @@ makeFieldChart <- function(
         )
 
     if(!is.na(barCol)) {
-      dxChart <- dxChart %>% 
+      dxChart <- dxChart %>%
         highcharter::hc_add_series(
           data = df_group[[group]],
-          name = paste(group, "Sales"),
+          name = paste(group, addName[2]),
           yAxis = 1,
           highcharter::hcaes(x = xCol, y = barCol),
+          color = label_df[label_df$label_text == group,][['groupColors']],
           type = "column"
         )
     }

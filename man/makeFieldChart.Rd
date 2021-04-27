@@ -9,7 +9,7 @@ makeFieldChart(
   df = hedxTools::ffr_fdr_sample,
   yCol = "value",
   xCol = "PURC_MON_NEW",
-  barCol = FALSE,
+  barCol = NA,
   groupCol = "group",
   xType = "datetime",
   xLeftMargin = 0.15,
@@ -17,6 +17,7 @@ makeFieldChart(
   y2Max = FALSE,
   yLeftText = "FFR(\%)",
   yRightText = "FDR(\%)",
+  addName = NULL,
   lineWidth = 1,
   tickIntervalY = 0.5,
   tickIntervalX = 30 * 24 * 3600 * 1000,
@@ -73,6 +74,8 @@ makeFieldChart(
 \item{yLeftText}{y축 좌측 문구, 기본값 = "FFR(\%)"}
 
 \item{yRightText}{y축 우측 문구, 기본값 = "FDR(\%)"}
+
+\item{addName}{Group name 우측의 추가 문구, 기본값 = NULL}
 
 \item{lineWidth}{라인 두께, 기본값 = 1}
 
