@@ -33,6 +33,7 @@
 #' @param groupColors 그룹별 라인과 라인라벨의 색상 : 색상코드 또는 FALSE,
 #'  기본값 = c("#000000", "#FF0000", "#008000", "#FF00FF", "#7F7F7F", "#FFC000"),
 #' @param useDatalabels 데이터 라벨의 표시 여부 : TRUE 또는 FALSE, 기본값 = c(TRUE, TRUE, TRUE, TRUE, FALSE, TRUE),
+#' @param datalabelsOrder 데이터 라벨의 우선 순위 : 기본값 = c("'20(R)", "'21(T)", "'21(R)", "L3M('20)", "L3M", "L6M"),
 #' @param yRightUse 우측 Y축을 사용할지 여부, 기본값 = TRUE
 #' @param useLeftlabels 좌측 라벨을 사용할지 여부, 기본값 = TRUE
 #' @param useLinelabels 라인별 라벨을 사용할지 여부, 기본값 = FALSE
@@ -77,15 +78,16 @@ makeFieldChart <- function(
   tickIntervalX = 30 * 24 * 3600 * 1000,
   useCustomize = TRUE,
   yAxis = c(0, 0, 0, 1, 1, 1), #
-  linelabelSignals = c("", "", "", "green", "", "green"),
-  linelabelSymbols = c("", "", "", "●", "", "●"),
+  linelabelSignals = c("", "", "", "", "green", "green"),
+  linelabelSymbols = c("", "", "", "", "●", "●"),
   weeklabelDate = c("(3/4)", "(3/11)"),
   weeklabelValue = c(1.06, 1.04),
   lineSymbols = c('circle', 'circle', 'circle', 'diamond', 'diamond', 'square'),
-  lineSymbolColors = c('white', '', 'white', '', '', 'white'),
+  lineSymbolColors = c('white', 'white', '', '', '', 'white'),
   markerHover = TRUE,
-  groupColors = c("#000000", "#FF0000", "#008000", "#FF00FF", "#7F7F7F", "#FFC000"),
-  useDatalabels = c(TRUE, TRUE, TRUE, TRUE, FALSE, TRUE),
+  groupColors = c("#000000", "#008000", "#FF0000", "#7F7F7F", "#FF00FF", "#FFC000"),
+  useDatalabels = c(TRUE, TRUE, TRUE, FALSE, TRUE, TRUE),
+  datalabelsOrder = c("'20(R)", "'21(T)", "'21(R)", "L3M('20)", "L3M", "L6M"),
   yRightUse = TRUE,
   useLeftlabels = TRUE,
   useLinelabels = FALSE,
@@ -121,7 +123,14 @@ makeFieldChart <- function(
 
   # group별로 df를 분리 해주고 정렬
   df_group <- split(df, df$group)
-  unique_group <- sort(unique(df$group))
+
+  if ((length(unique(df$group)) != length(unique(datalabelsOrder)) || !all(datalabelsOrder %in% unique(df$group) ))) {
+    unique_group <- sort(unique(df$group))
+  } else {
+    unique_group <- datalabelsOrder
+    print("test")
+  }
+  
 
   # y축 최대값을 정하기 위해 NA를 제외한 value의 최대값을 구하고 1.4를 곱함
   y_max <- ifelse(yMax, yMax, max(df$yCol[!is.na(df$yCol)]) * 1.4)

@@ -23,15 +23,16 @@ makeFieldChart(
   tickIntervalX = 30 * 24 * 3600 * 1000,
   useCustomize = TRUE,
   yAxis = c(0, 0, 0, 1, 1, 1),
-  linelabelSignals = c("", "", "", "green", "", "green"),
-  linelabelSymbols = c("", "", "", "●", "", "●"),
+  linelabelSignals = c("", "", "", "", "green", "green"),
+  linelabelSymbols = c("", "", "", "", "●", "●"),
   weeklabelDate = c("(3/4)", "(3/11)"),
   weeklabelValue = c(1.06, 1.04),
   lineSymbols = c("circle", "circle", "circle", "diamond", "diamond", "square"),
-  lineSymbolColors = c("white", "", "white", "", "", "white"),
+  lineSymbolColors = c("white", "white", "", "", "", "white"),
   markerHover = TRUE,
-  groupColors = c("#000000", "#FF0000", "#008000", "#FF00FF", "#7F7F7F", "#FFC000"),
-  useDatalabels = c(TRUE, TRUE, TRUE, TRUE, FALSE, TRUE),
+  groupColors = c("#000000", "#008000", "#FF0000", "#7F7F7F", "#FF00FF", "#FFC000"),
+  useDatalabels = c(TRUE, TRUE, TRUE, FALSE, TRUE, TRUE),
+  datalabelsOrder = c("'20(R)", "'21(T)", "'21(R)", "L3M('20)", "L3M", "L6M"),
   yRightUse = TRUE,
   useLeftlabels = TRUE,
   useLinelabels = FALSE,
@@ -109,6 +110,8 @@ makeFieldChart(
 기본값 = c("#000000", "#FF0000", "#008000", "#FF00FF", "#7F7F7F", "#FFC000"),}
 
 \item{useDatalabels}{데이터 라벨의 표시 여부 : TRUE 또는 FALSE, 기본값 = c(TRUE, TRUE, TRUE, TRUE, FALSE, TRUE),}
+
+\item{datalabelsOrder}{데이터 라벨의 우선 순위 : 기본값 = c("'20(R)", "'21(T)", "'21(R)", "L3M('20)", "L3M", "L6M"),}
 
 \item{yRightUse}{우측 Y축을 사용할지 여부, 기본값 = TRUE}
 
