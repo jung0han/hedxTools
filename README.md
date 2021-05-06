@@ -4,11 +4,11 @@
 
 처음 사용하는 경우:
 
-    devtools::install_gitlab("dongwoo.jeong/hedxTools", host = "http://mod.lge.com/hub")
+    devtools::install_gitlab("heqdx/hedxTools", host = "http://localhost:9999/gitlab", auth_token = "x6zy6vwoAg97hV7UdG-W")
 
 패키지를 업데이트 하는 경우:
 
-    devtools::install_gitlab("dongwoo.jeong/hedxTools", host = "http://mod.lge.com/hub")
+    devtools::install_gitlab("heqdx/hedxTools", host = "http://localhost:9999/gitlab", auth_token = "x6zy6vwoAg97hV7UdG-W")
     detach("package:hedxTools", unload = TRUE)
     library("hedxTools")
 
