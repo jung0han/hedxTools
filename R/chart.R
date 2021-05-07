@@ -104,7 +104,7 @@ makeFieldChart <- function(wd = getwd(),
                            datalabelOutline = "1px white",
                            imageHeight = 400,
                            imageWidth = 640,
-                           base64 = TRUE
+                           base64 = TRUE,
                            deleteTmp = TRUE) {
 
   # Main function------------------------------------------
