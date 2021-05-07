@@ -104,7 +104,8 @@ makeFieldChart <- function(wd = getwd(),
                            datalabelOutline = "1px white",
                            imageHeight = 400,
                            imageWidth = 640,
-                           base64 = TRUE) {
+                           base64 = TRUE
+                           deleteTmp = TRUE) {
 
   # Main function------------------------------------------
 
@@ -395,6 +396,7 @@ makeFieldChart <- function(wd = getwd(),
     webshot::webshot(url = html_path, vheight = imageHeight, vwidth = imageWidth, file = tf1)
     # png를 base64로 변경
     base64 <- RCurl::base64Encode(readBin(tf1, "raw", file.info(tf1)[1, "size"]), "txt")
+    if (deleteTmp) unlink("tmp", recursive = TRUE)
     return(base64)
   } else {
     return(dxChart)
