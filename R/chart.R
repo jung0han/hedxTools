@@ -59,78 +59,76 @@
 #' @export
 
 # 컬럼 정의 ----
-makeFieldChart <- function(
-  wd = getwd(),
-  df = hedxTools::ffr_fdr_sample,
-  yCol = "value",
-  xCol = "PURC_MON_NEW",
-  barCol = NA,
-  groupCol = "group",
-  xType = "datetime",
-  xLeftMargin = 0.15,
-  yMax = FALSE,
-  y2Max = FALSE,
-  yLeftText = "FFR(%)",
-  yRightText = "FDR(%)",
-  addName = NULL,
-  lineWidth = 1,
-  tickIntervalY = 0.5,
-  tickIntervalX = 30 * 24 * 3600 * 1000,
-  useCustomize = TRUE,
-  yAxis = c(0, 0, 0, 1, 1, 1), #
-  linelabelSignals = c("", "", "", "", "green", "green"),
-  linelabelSymbols = c("", "", "", "", "●", "●"),
-  weeklabelDate = c("(3/4)", "(3/11)"),
-  weeklabelValue = c(1.06, 1.04),
-  lineSymbols = c('circle', 'circle', 'circle', 'diamond', 'diamond', 'square'),
-  lineSymbolColors = c('white', 'white', '', '', '', 'white'),
-  markerHover = TRUE,
-  groupColors = c("#000000", "#008000", "#FF0000", "#7F7F7F", "#FF00FF", "#FFC000"),
-  useDatalabels = c(TRUE, TRUE, TRUE, FALSE, TRUE, TRUE),
-  datalabelsOrder = c("'20(R)", "'21(T)", "'21(R)", "L3M('20)", "L3M", "L6M"),
-  yRightUse = TRUE,
-  useLeftlabels = TRUE,
-  useLinelabels = FALSE,
-  useWeeklabels = TRUE,
-  titleSignal = "green", #
-  fontFamily = "LG스마트체2.0 Light",
-  titleText = "Global OLED (Product)",
-  titleFontWeight = 'bold',
-  titleFontSize = "16px",
-  linelabelFontWeight = 'bold',
-  linelabelFontSize = "12px",
-  weeklabelFontWeight = 'bold',
-  weeklabelFontSize = "12px",
-  datalabelFontWeight = "normal",
-  datalabelOutline = "1px white",
-  imageHeight = 400,
-  imageWidth = 640,
-  base64 = TRUE
-) {
+makeFieldChart <- function(wd = getwd(),
+                           df = hedxTools::ffr_fdr_sample,
+                           yCol = "value",
+                           xCol = "PURC_MON_NEW",
+                           barCol = NA,
+                           groupCol = "group",
+                           xType = "datetime",
+                           xLeftMargin = 0.15,
+                           yMax = FALSE,
+                           y2Max = FALSE,
+                           yLeftText = "FFR(%)",
+                           yRightText = "FDR(%)",
+                           addName = NULL,
+                           lineWidth = 1,
+                           tickIntervalY = 0.5,
+                           tickIntervalX = 30 * 24 * 3600 * 1000,
+                           useCustomize = TRUE,
+                           yAxis = c(0, 0, 0, 1, 1, 1), #
+                           linelabelSignals = c("", "", "", "", "green", "green"),
+                           linelabelSymbols = c("", "", "", "", "●", "●"),
+                           weeklabelDate = c("(3/4)", "(3/11)"),
+                           weeklabelValue = c(1.06, 1.04),
+                           lineSymbols = c("circle", "circle", "circle", "diamond", "diamond", "square"),
+                           lineSymbolColors = c("white", "white", "", "", "", "white"),
+                           markerHover = TRUE,
+                           groupColors = c("#000000", "#008000", "#FF0000", "#7F7F7F", "#FF00FF", "#FFC000"),
+                           useDatalabels = c(TRUE, TRUE, TRUE, FALSE, TRUE, TRUE),
+                           datalabelsOrder = c("'20(R)", "'21(T)", "'21(R)", "L3M('20)", "L3M", "L6M"),
+                           yRightUse = TRUE,
+                           useLeftlabels = TRUE,
+                           useLinelabels = FALSE,
+                           useWeeklabels = TRUE,
+                           titleSignal = "green", #
+                           fontFamily = "LG스마트체2.0 Light",
+                           titleText = "Global OLED (Product)",
+                           titleFontWeight = "bold",
+                           titleFontSize = "16px",
+                           linelabelFontWeight = "bold",
+                           linelabelFontSize = "12px",
+                           weeklabelFontWeight = "bold",
+                           weeklabelFontSize = "12px",
+                           datalabelFontWeight = "normal",
+                           datalabelOutline = "1px white",
+                           imageHeight = 400,
+                           imageWidth = 640,
+                           base64 = TRUE) {
 
   # Main function------------------------------------------
 
   setwd(wd)
   df <- dplyr::rename(df, "yCol" = yCol, "xCol" = xCol, "group" = groupCol)
 
-  if(!is.na(barCol)) df <- dplyr::rename(df, "barCol" = barCol)
+  if (!is.na(barCol)) df <- dplyr::rename(df, "barCol" = barCol)
 
   # x 좌표는 소수점 둘째자리로 반올림, y좌표는 datetime으로 변경
-  df["yCol"] <- round(df["yCol"], digit=3)
-  if(xType == "datetime") {
-    df["xCol"] <- as.Date(paste0(df[["xCol"]],1),"%Y%m%d")
+  df["yCol"] <- round(df["yCol"], digit = 3)
+  if (xType == "datetime") {
+    df["xCol"] <- as.Date(paste0(df[["xCol"]], 1), "%Y%m%d")
   }
 
   # group별로 df를 분리 해주고 정렬
   df_group <- split(df, df$group)
 
-  if ((length(unique(df$group)) != length(unique(datalabelsOrder)) || !all(datalabelsOrder %in% unique(df$group) ))) {
+  if ((length(unique(df$group)) != length(unique(datalabelsOrder)) || !all(datalabelsOrder %in% unique(df$group)))) {
     unique_group <- sort(unique(df$group))
   } else {
     unique_group <- datalabelsOrder
     print("test")
   }
-  
+
 
   # y축 최대값을 정하기 위해 NA를 제외한 value의 최대값을 구하고 1.4를 곱함
   y_max <- ifelse(yMax, yMax, max(df$yCol[!is.na(df$yCol)]) * 1.4)
@@ -145,9 +143,9 @@ makeFieldChart <- function(
 
   # 금주, 지난주 실적을 기준으로 signal을 구해줌
   ffr_signal <- hedxTools::checkWeekSignal(
-    ffr_week[1,"weeklabelValue"],
-    ffr_week[2,"weeklabelValue"]
-    )
+    ffr_week[1, "weeklabelValue"],
+    ffr_week[2, "weeklabelValue"]
+  )
 
 
   # x축의 가장 처음 좌표를 구해줌
@@ -158,25 +156,27 @@ makeFieldChart <- function(
     xType == "datetime",
     highcharter::datetime_to_timestamp(df[["xCol"]][length(df[["xCol"]])]),
     length(unique(df$xCol))
-    )
+  )
 
   label_y <- c()
   label_text <- c()
 
-  for(group_name in unique_group) {
+  for (group_name in unique_group) {
     group_name <- as.character(group_name)
-    value <- df %>% dplyr::filter(!is.na(yCol), group == group_name) %>% dplyr::select(yCol)
+    value <- df %>%
+      dplyr::filter(!is.na(yCol), group == group_name) %>%
+      dplyr::select(yCol)
     label_text <- c(label_text, as.character(df_group[[as.character(group_name)]][["group"]][1]))
-    label_y <- c(label_y, value[1,])
+    label_y <- c(label_y, value[1, ])
   }
-  if(!useCustomize) {
-    yAxis = 0
-    linelabelSignals = FALSE
-    linelabelSymbols = FALSE
-    groupColors = FALSE
-    useDatalabels = FALSE
-    lineSymbols = FALSE
-    lineSymbolColors = FALSE
+  if (!useCustomize) {
+    yAxis <- 0
+    linelabelSignals <- FALSE
+    linelabelSymbols <- FALSE
+    groupColors <- FALSE
+    useDatalabels <- FALSE
+    lineSymbols <- FALSE
+    lineSymbolColors <- FALSE
   }
 
   label_df <- data.frame(
@@ -189,27 +189,27 @@ makeFieldChart <- function(
     useDatalabels,
     lineSymbols,
     lineSymbolColors
-    ) %>% dplyr::filter(!is.na(label_y))
+  ) %>% dplyr::filter(!is.na(label_y))
 
   # label_df <- label_df[!is.na(label_df$label_y),]
   print(label_df)
 
   label <- list()
   # 옵션값을 가지고 라인 좌측 라벨 구조 생성
-  for(group in label_df$label_text) {
-    label[[length(label)+1]] <- list(
-      point = list(x = label_x, y = label_df[label_df$label_text == group,][['label_y']], xAxis = 0, yAxis = label_df[label_df$label_text == group,][['yAxis']]),
-      borderWidth=0,
+  for (group in label_df$label_text) {
+    label[[length(label) + 1]] <- list(
+      point = list(x = label_x, y = label_df[label_df$label_text == group, ][["label_y"]], xAxis = 0, yAxis = label_df[label_df$label_text == group, ][["yAxis"]]),
+      borderWidth = 0,
       text = paste0(
         "<span style='color:",
-        label_df[label_df$label_text == group,][['linelabelSignals']], ";'>",
-        label_df[label_df$label_text == group,][['linelabelSymbols']],
+        label_df[label_df$label_text == group, ][["linelabelSignals"]], ";'>",
+        label_df[label_df$label_text == group, ][["linelabelSymbols"]],
         "</span>",
         "<p style='color:",
-        label_df[label_df$label_text == group,][['groupColors']], ";'>",
+        label_df[label_df$label_text == group, ][["groupColors"]], ";'>",
         group,
         "</span>"
-        )
+      )
     )
   }
 
@@ -217,79 +217,83 @@ makeFieldChart <- function(
   dxChart <- highcharter::highchart() %>%
     highcharter::hc_chart(zoomType = "x", plotBorderWidth = 1) %>%
     highcharter::hc_yAxis_multiples(
-    list(
-      title = list(text = yLeftText),
-      min=0,
-      max=y_max,
-      tickInterval = tickIntervalY,
-      endOnTick=FALSE,
-      gridLineColor=""
+      list(
+        title = list(text = yLeftText),
+        min = 0,
+        max = y_max,
+        tickInterval = tickIntervalY,
+        endOnTick = FALSE,
+        gridLineColor = ""
       ),
-    list(
-      title = list(text = yRightText),
-      visible = yRightUse,
-      min=0,
-      max=y2_max,
-      endOnTick=FALSE,
-      gridLineColor="",
-      opposite = TRUE
+      list(
+        title = list(text = yRightText),
+        visible = yRightUse,
+        min = 0,
+        max = y2_max,
+        endOnTick = FALSE,
+        gridLineColor = "",
+        opposite = TRUE
       )
-  ) %>%
+    ) %>%
     highcharter::hc_xAxis(
       minPadding = xLeftMargin,
       type = xType,
       showFirstLabel = ifelse(xType == "datetime", FALSE, TRUE),
       tickInterval = tickIntervalX,
       crosshair = list(
-        width=1,
-        color="#DFDFDF",
-        dashStyle="shortdot"
+        width = 1,
+        color = "#DFDFDF",
+        dashStyle = "shortdot"
       ),
       labels = list(
-        format = ifelse(xType =="datetime", "{value:%b}", "{value}")
-        )
-      ) %>%
+        format = ifelse(xType == "datetime", "{value:%b}", "{value}")
+      )
+    ) %>%
     highcharter::hc_plotOptions(
       series = list(
         dataLabels = list(
           allowOverlap = TRUE,
           format = "{point.yCol:.2f}",
           style = list(fontWeight = datalabelFontWeight, textOutline = datalabelOutline)
-          ),
-        lineWidth = lineWidth
+        ),
+        lineWidth = lineWidth,
+        animation = if (base64) FALSE
       )
-    ) %>% # dataLabels 전역 설정
+    ) %>%
+    # dataLabels 전역 설정
     highcharter::hc_tooltip(
       sort = TRUE,
       table = TRUE
     ) %>%
     highcharter::hc_title(
-      text = paste0("<span style='color:",
-                    titleSignal,
-                    ";'>",
-                    if(titleSignal == "black") {
-                      "○ "
-                    } else if(titleSignal == "white") {
-                      ""
-                    } else {
-                      "● "
-                    },
-                    "</span>",
-                    titleText),
+      text = paste0(
+        "<span style='color:",
+        titleSignal,
+        ";'>",
+        if (titleSignal == "black") {
+          "○ "
+        } else if (titleSignal == "white") {
+          ""
+        } else {
+          "● "
+        },
+        "</span>",
+        titleText
+      ),
       margin = 10, align = "center",
       style = list(fontFamily = fontFamily, fontWeight = titleFontWeight, useHTML = TRUE, fontSize = titleFontSize)
     )
 
 
-  if(useLeftlabels) {
+  if (useLeftlabels) {
     dxChart <- dxChart %>% highcharter::hc_add_annotation(
       labelOptions = list(
         y = 0,
         x = -60,
-        verticalAlign="middle",
-        allowOverlap=TRUE,
-        align="left",
-        padding=1,
+        verticalAlign = "middle",
+        allowOverlap = TRUE,
+        align = "left",
+        padding = 1,
         style = list(fontFamily = fontFamily, fontWeight = linelabelFontWeight, fontSize = linelabelFontSize),
         backgroundColor = ""
       ),
@@ -297,49 +301,51 @@ makeFieldChart <- function(
     )
   }
 
-  if(useWeeklabels) {
-    dxChart <- dxChart %>% highcharter::hc_add_annotation(
-      draggable = FALSE,
-      labelOptions = list(
-        y = -8,
-        x = -179,
-        verticalAlign="middle",
-        allowOverlap=TRUE,
-        align="left",
-        style = list(fontFamily = fontFamily, fontWeight = weeklabelFontWeight, fontSize = weeklabelFontSize),
-        backgroundColor = "white"
-      ),
-      labels = list(
-        point = list(x = top_label_x, y = y_max, xAxis = 0, yAxis = 0),
-        borderWidth=0,
-        text = paste(ffr_week[1, 'weeklabelValue'], ffr_week[1, 'weeklabelDate'], "→")
-      )
-    ) %>% highcharter::hc_add_annotation(
-      draggable = FALSE,
-      labelOptions = list(
-        y = -8,
-        x = 0,
-        verticalAlign="middle",
-        allowOverlap=TRUE,
-        align="left",
-        style = list(
-          fontFamily = fontFamily,
-          fontWeight = weeklabelFontWeight,
-          fontSize = weeklabelFontSize,
-          color = ffr_signal
+  if (useWeeklabels) {
+    dxChart <- dxChart %>%
+      highcharter::hc_add_annotation(
+        draggable = FALSE,
+        labelOptions = list(
+          y = -8,
+          x = -179,
+          verticalAlign = "middle",
+          allowOverlap = TRUE,
+          align = "left",
+          style = list(fontFamily = fontFamily, fontWeight = weeklabelFontWeight, fontSize = weeklabelFontSize),
+          backgroundColor = "white"
+        ),
+        labels = list(
+          point = list(x = top_label_x, y = y_max, xAxis = 0, yAxis = 0),
+          borderWidth = 0,
+          text = paste(ffr_week[1, "weeklabelValue"], ffr_week[1, "weeklabelDate"], "→")
+        )
+      ) %>%
+      highcharter::hc_add_annotation(
+        draggable = FALSE,
+        labelOptions = list(
+          y = -8,
+          x = 0,
+          verticalAlign = "middle",
+          allowOverlap = TRUE,
+          align = "left",
+          style = list(
+            fontFamily = fontFamily,
+            fontWeight = weeklabelFontWeight,
+            fontSize = weeklabelFontSize,
+            color = ffr_signal
           ),
-        backgroundColor = rgb(217/255,217/255,217/255)
-      ),
-      labels = list(
-        point = list(x = top_label_x, y = y_max, xAxis = 0, yAxis = 0),
-        borderWidth=0,
-        text = paste(ffr_week[2, 'weeklabelValue'], ffr_week[2, 'weeklabelDate'])
+          backgroundColor = rgb(217 / 255, 217 / 255, 217 / 255)
+        ),
+        labels = list(
+          point = list(x = top_label_x, y = y_max, xAxis = 0, yAxis = 0),
+          borderWidth = 0,
+          text = paste(ffr_week[2, "weeklabelValue"], ffr_week[2, "weeklabelDate"])
+        )
       )
-    )
   }
 
   # group별 데이터, 라벨 이름, 마커 옵션을 넣어줌
-  for(group in label_df$label_text) {
+  for (group in label_df$label_text) {
     dxChart <- dxChart %>%
       highcharter::hc_add_series(
         data = df_group[[group]],
@@ -348,51 +354,51 @@ makeFieldChart <- function(
         marker = list(
           enabled = ifelse(lineSymbols, TRUE, FALSE),
           states = list(hover = list(enabled = markerHover)),
-          symbol = label_df[label_df$label_text == group,][['lineSymbols']],
-          fillColor=label_df[label_df$label_text == group,][['lineSymbolColors']],
-          lineWidth=1,
-          lineColor=NULL
-          ),
+          symbol = label_df[label_df$label_text == group, ][["lineSymbols"]],
+          fillColor = label_df[label_df$label_text == group, ][["lineSymbolColors"]],
+          lineWidth = 1,
+          lineColor = NULL
+        ),
         dataLabels = list(
-          enabled = label_df[label_df$label_text == group,][['useDatalabels']],
-          color = label_df[label_df$label_text == group,][['groupColors']]
-          ),
+          enabled = label_df[label_df$label_text == group, ][["useDatalabels"]],
+          color = label_df[label_df$label_text == group, ][["groupColors"]]
+        ),
         label = list(enabled = useLinelabels, style = list(fontWeight = "nomal")),
-        color = label_df[label_df$label_text == group,][['groupColors']],
-        yAxis = label_df[label_df$label_text == group,][['yAxis']],
+        color = label_df[label_df$label_text == group, ][["groupColors"]],
+        yAxis = label_df[label_df$label_text == group, ][["yAxis"]],
         type = "line"
-        )
+      )
 
-    if(!is.na(barCol)) {
+    if (!is.na(barCol)) {
       dxChart <- dxChart %>%
         highcharter::hc_add_series(
           data = df_group[[group]],
           name = paste(group, addName[2]),
           yAxis = 1,
           highcharter::hcaes(x = xCol, y = barCol),
-          color = label_df[label_df$label_text == group,][['groupColors']],
+          color = label_df[label_df$label_text == group, ][["groupColors"]],
           type = "column"
         )
     }
   }
-
-  if(base64 == TRUE) {
-    if(!dir.exists('tmp')) {
-      dir.create('tmp')
+  if (base64 == TRUE) {
+    if (!dir.exists("tmp")) {
+      dir.create("tmp")
     }
-    htmlwidgets::saveWidget(widget = dxChart, file = "./tmp/dxChart.html")
-    if(!webshot::is_phantomjs_installed()) {
+    html_path <- sprintf("./tmp/%s_%s.html", titleText, format(Sys.Date(), "%y%m%d"))
+    tf1 <- sprintf("./tmp/%s_%s.png", titleText, format(Sys.Date(), "%y%m%d"))
+
+    htmlwidgets::saveWidget(widget = dxChart, file = html_path)
+    if (!webshot::is_phantomjs_installed()) {
       webshot::install_phantomjs()
     }
-    tf1 <- "./tmp/dxChart.png"
-    webshot::webshot(url = "./tmp/dxChart.html", vheight = imageHeight, vwidth = imageWidth, file = tf1, delay = 1)
+    webshot::webshot(url = html_path, vheight = imageHeight, vwidth = imageWidth, file = tf1)
     # png를 base64로 변경
     base64 <- RCurl::base64Encode(readBin(tf1, "raw", file.info(tf1)[1, "size"]), "txt")
     return(base64)
   } else {
     return(dxChart)
   }
-
 }
 
 #' Base64 str to Html page
@@ -426,15 +432,15 @@ base64ToHtml <- function(base64Chart = makeFieldChart()) {
 #' @export
 #'
 makePresetChart <- function(preset = "ffr", df = NaN, title = "", base64 = TRUE) {
-  if(preset == "ffr") {
-    if(is.na(df)) {
+  if (preset == "ffr") {
+    if (is.na(df)) {
       df <- hedxTools::ffr_fdr_sample
     }
     dxChart <- hedxTools::makeFieldChart(titleText = title, base64 = base64)
     return(dxChart)
   }
-  if(preset == "hazard") {
-    if(is.na(df)) {
+  if (preset == "hazard") {
+    if (is.na(df)) {
       df <- hedxTools::hazard_accumulate_sample
     }
     dxChart <- hedxTools::makeFieldChart(
@@ -444,8 +450,8 @@ makePresetChart <- function(preset = "ffr", df = NaN, title = "", base64 = TRUE)
       df = df,
       titleText = title,
       yLeftText = "Hazard (%)",
-      xCol="SVC_MON_NEW_ind_cal",
-      yCol="svc_rate_value",
+      xCol = "SVC_MON_NEW_ind_cal",
+      yCol = "svc_rate_value",
       groupCol = "CALC_PROD_DT_ind",
       xType = "category",
       useLeftlabels = FALSE,
@@ -454,7 +460,7 @@ makePresetChart <- function(preset = "ffr", df = NaN, title = "", base64 = TRUE)
       useLinelabels = TRUE,
       markerHover = FALSE,
       base64 = base64
-      )
+    )
     return(dxChart)
   }
 }
@@ -471,14 +477,14 @@ makePresetChart <- function(preset = "ffr", df = NaN, title = "", base64 = TRUE)
 #' @export
 #'
 checkWeekSignal <- function(last = 1, this = 1) {
-  if(last >= this) {
-    if(last == this) {
-      signal = "black"
+  if (last >= this) {
+    if (last == this) {
+      signal <- "black"
     } else {
-      signal = "green"
+      signal <- "green"
     }
   } else {
-    signal = "red"
+    signal <- "red"
   }
   print(paste("Week signal :", signal))
   return(signal)
@@ -497,16 +503,18 @@ checkWeekSignal <- function(last = 1, this = 1) {
 #' @export
 #'
 checkSignal <- function(df, target, type, yCol = "value", xCol = "PURC_MON_NEW", groupCol = "group") {
-
-  df <- df %>% dplyr::rename(yCol = yCol, xCol = xCol, group = groupCol) %>% dplyr::filter(!is.na(yCol)) %>% dplyr::arrange(desc(xCol))
+  df <- df %>%
+    dplyr::rename(yCol = yCol, xCol = xCol, group = groupCol) %>%
+    dplyr::filter(!is.na(yCol)) %>%
+    dplyr::arrange(desc(xCol))
 
   compare_continuity <- function(df, times) {
     df <- df$yCol
-    if(length(df) < times + 1) {
+    if (length(df) < times + 1) {
       message("비교할 대상이 ", times, "주기 보다 짧습니다.")
     }
     result <- TRUE
-    for(index in 1:times) {
+    for (index in 1:times) {
       result <- result && df[index] > df[index + 1]
     }
     return(result)
@@ -514,35 +522,35 @@ checkSignal <- function(df, target, type, yCol = "value", xCol = "PURC_MON_NEW",
 
   compare_target <- function(df, target, percent) {
     target <- target %>%
-      dplyr::rename(yCol = yCol, xCol =xCol, group = groupCol) %>%
+      dplyr::rename(yCol = yCol, xCol = xCol, group = groupCol) %>%
       dplyr::filter(xCol == df$xCol[1])
-    if(is.na(target$yCol)) {
+    if (is.na(target$yCol)) {
       return(FALSE)
-    } else if(df$yCol[1] > target$yCol * percent / 100) {
+    } else if (df$yCol[1] > target$yCol * percent / 100) {
       return(TRUE)
     } else {
       return(FALSE)
     }
   }
 
-  if(type == "ffr") {
-    if(df$yCol[1] < 1.5) {
+  if (type == "ffr") {
+    if (df$yCol[1] < 1.5) {
       message("FFR : 1.5% 미만")
       signal <- "black"
-    } else if(compare_target(df, target, 95) || compare_continuity(df, 3)) {
+    } else if (compare_target(df, target, 95) || compare_continuity(df, 3)) {
       message("FFR : 목표대비 95%↓, 3개월 연속 악화")
       signal <- "red"
-    } else if(!compare_target(df, target, 100)) {
+    } else if (!compare_target(df, target, 100)) {
       message("FFR : 목표대비 100%↑")
       signal <- "green"
-    } else if(!compare_target(df, target, 95) || compare_continuity(df, 2)) {
+    } else if (!compare_target(df, target, 95) || compare_continuity(df, 2)) {
       message("FFR : 목표대비 95%↑, 2개월 연속 악화")
       signal <- "yellow"
     }
   }
 
-  if(type == "L6M") {
-    if(compare_continuity(df, 1)) {
+  if (type == "L6M") {
+    if (compare_continuity(df, 1)) {
       message("L6M : 전월대비 악화")
       signal <- "red"
     } else {
@@ -551,11 +559,11 @@ checkSignal <- function(df, target, type, yCol = "value", xCol = "PURC_MON_NEW",
     }
   }
 
-  if(type == "L3M") {
-    if(compare_continuity(df, 1) && compare_target(df, target, 100)) {
+  if (type == "L3M") {
+    if (compare_continuity(df, 1) && compare_target(df, target, 100)) {
       message("L3M : 전월대비 악화 및 전년 동기대비 악화")
       signal <- "red"
-    } else if(compare_continuity(df, 1) || compare_target(df, target, 100)) {
+    } else if (compare_continuity(df, 1) || compare_target(df, target, 100)) {
       message("L3M : 전월대비 악화, 전년 동기대비 악화")
       signal <- "yellow"
     } else {
