@@ -383,11 +383,12 @@ makeFieldChart <- function(wd = getwd(),
     }
   }
   if (base64 == TRUE) {
-    if (!dir.exists("tmp")) {
-      dir.create("tmp")
+    hash <- hashids::encode(as.integer(Sys.time()), hashids::hashid_settings(titleText))
+    if (!dir.exists(paste0("tmp_", hash))) {
+      dir.create(paste0("tmp_", hash))
     }
-    html_path <- sprintf("./tmp/%s_%s.html", titleText, format(Sys.Date(), "%y%m%d"))
-    tf1 <- sprintf("./tmp/%s_%s.png", titleText, format(Sys.Date(), "%y%m%d"))
+    html_path <- sprintf("./tmp_%s/%s_%s.html", hash, titleText, format(Sys.Date(), "%y%m%d"))
+    tf1 <- sprintf("./tmp_%s/%s_%s.png", hash, titleText, format(Sys.Date(), "%y%m%d"))
 
     htmlwidgets::saveWidget(widget = dxChart, file = html_path)
     if (!webshot::is_phantomjs_installed()) {
@@ -396,7 +397,7 @@ makeFieldChart <- function(wd = getwd(),
     webshot::webshot(url = html_path, vheight = imageHeight, vwidth = imageWidth, file = tf1)
     # png를 base64로 변경
     base64 <- RCurl::base64Encode(readBin(tf1, "raw", file.info(tf1)[1, "size"]), "txt")
-    if (deleteTmp) unlink("tmp", recursive = TRUE)
+    if (deleteTmp) unlink(paste0("tmp_", hash), recursive = TRUE)
     return(base64)
   } else {
     return(dxChart)
