@@ -216,7 +216,7 @@ makeFieldChart <- function(wd = getwd(),
 
   # each series Chart ----
   dxChart <- highcharter::highchart() %>%
-    highcharter::hc_chart(zoomType = "x", plotBorderWidth = 1) %>%
+    highcharter::hc_chart(zoomType = "x", plotBorderWidth = 1, animation = if (base64) FALSE) %>%
     highcharter::hc_yAxis_multiples(
       list(
         title = list(text = yLeftText),
