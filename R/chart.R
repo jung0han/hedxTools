@@ -94,6 +94,7 @@ makeFieldChart <- function(wd = getwd(),
                            titleSignal = "green", #
                            fontFamily = "LG스마트체2.0 Light",
                            titleText = "Global OLED (Product)",
+                           fileName = "temp",
                            titleFontWeight = "bold",
                            titleFontSize = "16px",
                            linelabelFontWeight = "bold",
@@ -387,8 +388,8 @@ makeFieldChart <- function(wd = getwd(),
     if (!dir.exists(paste0("tmp_", hash))) {
       dir.create(paste0("tmp_", hash))
     }
-    html_path <- sprintf("./tmp_%s/%s_%s.html", hash, titleText, format(Sys.Date(), "%y%m%d"))
-    tf1 <- sprintf("./tmp_%s/%s_%s.png", hash, titleText, format(Sys.Date(), "%y%m%d"))
+    html_path <- sprintf("./tmp_%s/%s_%s.html", hash, fileName, format(Sys.Date(), "%y%m%d"))
+    tf1 <- sprintf("./tmp_%s/%s_%s.png", hash, fileName, format(Sys.Date(), "%y%m%d"))
 
     htmlwidgets::saveWidget(widget = dxChart, file = html_path)
     if (!webshot::is_phantomjs_installed()) {
