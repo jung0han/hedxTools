@@ -195,7 +195,8 @@ makeFieldChart <- function(wd = getwd(),
   group_colors <- c()
   group_colors[1:length(unique_group)] <- "#A6A6A6"
   print(length(group_colors) - length(groupColors))
-  group_colors[(length(group_colors) - length(groupColors)):length(group_colors)] <- groupColors
+  group_colors_index <- length(group_colors) - length(groupColors) + 1
+  group_colors[group_colors_index:length(group_colors)] <- groupColors
   print(group_colors)
 
   label_df <- data.frame(
