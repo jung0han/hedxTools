@@ -150,12 +150,6 @@ makeFieldChart <- function(wd = getwd(),
     ffr_week[2, "weeklabelValue"]
   )
 
-
-  # x축의 가장 처음 좌표를 구해줌
-  # label_x <- ifelse(xType == "datetime", highcharter::datetime_to_timestamp(df[["xCol"]][1]), 1)
-
-  # label_x <- ifelse(xType == "datetime", highcharter::datetime_to_timestamp(rev(df[["xCol"]])[1]), 1)
-
   # x축의 가장 마지막 좌표를 주해줌
   top_label_x <- ifelse(
     xType == "datetime",
@@ -177,13 +171,14 @@ makeFieldChart <- function(wd = getwd(),
       dplyr::select(xCol)
     label_text <- c(label_text, as.character(df_group[[as.character(group_name)]][["group"]][1]))
     if(labelLocation == "right") {
-      label_x <- c(label_x, ifelse(xType == "datetime", highcharter::datetime_to_timestamp(rev(value_x$xCol)[1]), rev(value_x$xCol)[1]))
+      label_x <- c(label_x, ifelse(xType == "datetime", highcharter::datetime_to_timestamp(rev(value_x$xCol)[1]), length(value_x$xCol)))
       label_y <- c(label_y, rev(value_y$yCol)[1])
     } else {
       label_x <- c(label_x, ifelse(xType == "datetime", highcharter::datetime_to_timestamp(value_x$xCol[1]), value_x$xCol[1]))
       label_y <- c(label_y, value_y$yCol[1])
     }
   }
+  print(label_x)
 
   if (!useCustomize) {
     yAxis <- 0
