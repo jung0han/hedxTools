@@ -88,6 +88,7 @@ makeFieldChart <- function(wd = getwd(),
                            useDatalabels = c(TRUE, TRUE, TRUE, FALSE, TRUE, TRUE),
                            datalabelsOrder = c("'20(R)", "'21(T)", "'21(R)", "L3M('20)", "L3M", "L6M"),
                            yRightUse = TRUE,
+                           labelLocation = "left",
                            useLeftlabels = TRUE,
                            useLinelabels = FALSE,
                            useWeeklabels = TRUE,
@@ -151,7 +152,9 @@ makeFieldChart <- function(wd = getwd(),
 
 
   # x축의 가장 처음 좌표를 구해줌
-  label_x <- ifelse(xType == "datetime", highcharter::datetime_to_timestamp(df[["xCol"]][1]), 1)
+  # label_x <- ifelse(xType == "datetime", highcharter::datetime_to_timestamp(df[["xCol"]][1]), 1)
+
+  # label_x <- ifelse(xType == "datetime", highcharter::datetime_to_timestamp(rev(df[["xCol"]])[1]), 1)
 
   # x축의 가장 마지막 좌표를 주해줌
   top_label_x <- ifelse(
@@ -161,33 +164,53 @@ makeFieldChart <- function(wd = getwd(),
   )
 
   label_y <- c()
+  label_x <- c()
   label_text <- c()
 
   for (group_name in unique_group) {
     group_name <- as.character(group_name)
-    value <- df %>%
+    value_y <- df %>%
       dplyr::filter(!is.na(yCol), group == group_name) %>%
       dplyr::select(yCol)
+    value_x <- df %>%
+      dplyr::filter(!is.na(yCol), group == group_name) %>%
+      dplyr::select(xCol)
     label_text <- c(label_text, as.character(df_group[[as.character(group_name)]][["group"]][1]))
-    label_y <- c(label_y, value[1, ])
+    if(labelLocation == "right") {
+      label_x <- c(label_x, ifelse(xType == "datetime", highcharter::datetime_to_timestamp(rev(value_x$xCol)[1]), rev(value_x$xCol)[1]))
+      label_y <- c(label_y, rev(value_y$yCol)[1])
+    } else {
+      label_x <- c(label_x, ifelse(xType == "datetime", highcharter::datetime_to_timestamp(value_x$xCol[1]), value_x$xCol[1]))
+      label_y <- c(label_y, value_y$yCol[1])
+    }
   }
+
   if (!useCustomize) {
     yAxis <- 0
-    linelabelSignals <- FALSE
-    linelabelSymbols <- FALSE
-    groupColors <- FALSE
+    linelabelSignals <- "black"
+    linelabelSymbols <- ""
     useDatalabels <- FALSE
     lineSymbols <- FALSE
     lineSymbolColors <- FALSE
   }
 
+  if(length(lineSymbols) != 1) {
+    label_x <- ifelse(xType == "datetime", highcharter::datetime_to_timestamp(df[["xCol"]][1]), 1)
+  }
+  group_colors <- c()
+  group_colors[1:length(unique_group)] <- "#A6A6A6"
+  print(length(group_colors) - length(groupColors))
+  group_colors[(length(group_colors) - length(groupColors)):length(group_colors)] <- groupColors
+  print(group_colors)
+
   label_df <- data.frame(
     label_text,
+    label_x,
     label_y,
     yAxis,
     linelabelSignals,
     linelabelSymbols,
-    groupColors,
+    group_colors,
     useDatalabels,
     lineSymbols,
     lineSymbolColors
@@ -200,7 +223,7 @@ makeFieldChart <- function(wd = getwd(),
   # 옵션값을 가지고 라인 좌측 라벨 구조 생성
   for (group in label_df$label_text) {
     label[[length(label) + 1]] <- list(
-      point = list(x = label_x, y = label_df[label_df$label_text == group, ][["label_y"]], xAxis = 0, yAxis = label_df[label_df$label_text == group, ][["yAxis"]]),
+      point = list(x = label_df[label_df$label_text == group, ][["label_x"]] - 1, y = label_df[label_df$label_text == group, ][["label_y"]], xAxis = 0, yAxis = label_df[label_df$label_text == group, ][["yAxis"]]),
       borderWidth = 0,
       text = paste0(
         "<span style='color:",
@@ -208,7 +231,7 @@ makeFieldChart <- function(wd = getwd(),
         label_df[label_df$label_text == group, ][["linelabelSymbols"]],
         "</span>",
         "<p style='color:",
-        label_df[label_df$label_text == group, ][["groupColors"]], ";'>",
+        label_df[label_df$label_text == group, ][["group_colors"]], ";'>",
         group,
         "</span>"
       )
@@ -290,10 +313,11 @@ makeFieldChart <- function(wd = getwd(),
   if (useLeftlabels) {
     dxChart <- dxChart %>% highcharter::hc_add_annotation(
       labelOptions = list(
-        y = 0,
-        x = -60,
+        y = ifelse(labelLocation == "right", -10, 0),
+        x = ifelse(labelLocation == "right", -10, -60),
         verticalAlign = "middle",
         allowOverlap = TRUE,
+        overflow = 'none',
         align = "left",
         padding = 1,
         style = list(fontFamily = fontFamily, fontWeight = linelabelFontWeight, fontSize = linelabelFontSize),
@@ -363,10 +387,10 @@ makeFieldChart <- function(wd = getwd(),
         ),
         dataLabels = list(
           enabled = label_df[label_df$label_text == group, ][["useDatalabels"]],
-          color = label_df[label_df$label_text == group, ][["groupColors"]]
+          color = label_df[label_df$label_text == group, ][["group_colors"]]
         ),
         label = list(enabled = useLinelabels, style = list(fontWeight = "nomal")),
-        color = label_df[label_df$label_text == group, ][["groupColors"]],
+        color = label_df[label_df$label_text == group, ][["group_colors"]],
         yAxis = label_df[label_df$label_text == group, ][["yAxis"]],
         type = "line"
       )
@@ -378,7 +402,7 @@ makeFieldChart <- function(wd = getwd(),
           name = paste(group, addName[2]),
           yAxis = 1,
           highcharter::hcaes(x = xCol, y = barCol),
-          color = label_df[label_df$label_text == group, ][["groupColors"]],
+          color = label_df[label_df$label_text == group, ][["group_colors"]],
           type = "column"
         )
     }
