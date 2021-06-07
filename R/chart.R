@@ -239,7 +239,7 @@ makeFieldChart <- function(wd = getwd(),
     highcharter::hc_chart(zoomType = "x", plotBorderWidth = 1, animation = if (base64) FALSE) %>%
     highcharter::hc_yAxis_multiples(
       list(
-        title = list(text = yLeftText),
+        title = list(text = yLeftText, align = 'high'),
         min = 0,
         max = y_max,
         tickInterval = tickIntervalY,
@@ -247,7 +247,7 @@ makeFieldChart <- function(wd = getwd(),
         gridLineColor = ""
       ),
       list(
-        title = list(text = yRightText),
+        title = list(text = yRightText, align = 'low'),
         visible = yRightUse,
         min = 0,
         max = y2_max,
