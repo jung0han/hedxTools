@@ -92,6 +92,7 @@ makeFieldChart <- function(wd = getwd(),
                            useLeftlabels = TRUE,
                            useLinelabels = FALSE,
                            useWeeklabels = TRUE,
+                           useRound = TRUE,
                            titleSignal = "green", #
                            fontFamily = "LG스마트체2.0 Light",
                            titleText = "Global OLED (Product)",
@@ -117,7 +118,10 @@ makeFieldChart <- function(wd = getwd(),
   if (!is.na(barCol)) df <- dplyr::rename(df, "barCol" = barCol)
 
   # x 좌표는 소수점 둘째자리로 반올림, y좌표는 datetime으로 변경
-  df["yCol"] <- round(df["yCol"], digit = 3)
+  if (useRound == TRUE) {
+    df["yCol"] <- round(df["yCol"], digit = 3)
+  } 
+  
   if (xType == "datetime") {
     df["xCol"] <- as.Date(paste0(df[["xCol"]], 1), "%Y%m%d")
   }
