@@ -87,11 +87,13 @@ makeFieldChart <- function(wd = getwd(),
                            groupColors = c("#000000", "#008000", "#FF0000", "#7F7F7F", "#FF00FF", "#FFC000"),
                            useDatalabels = c(TRUE, TRUE, TRUE, FALSE, TRUE, TRUE),
                            datalabelsOrder = c("'20(R)", "'21(T)", "'21(R)", "L3M('20)", "L3M", "L6M"),
+                           dataLabelsOverlap = TRUE,
                            yRightUse = TRUE,
                            labelLocation = "left",
                            useLeftlabels = TRUE,
                            useLinelabels = FALSE,
                            useWeeklabels = TRUE,
+                           useLegend = TRUE,
                            useRound = TRUE,
                            titleSignal = "green", #
                            fontFamily = "LG스마트체2.0 Light",
@@ -103,6 +105,8 @@ makeFieldChart <- function(wd = getwd(),
                            linelabelFontSize = "12px",
                            weeklabelFontWeight = "bold",
                            weeklabelFontSize = "12px",
+                           legendFontSize = "12px",
+                           xAxisLabelsSize = "12px",
                            datalabelFontWeight = "normal",
                            datalabelOutline = "1px white",
                            imageHeight = 400,
@@ -121,7 +125,7 @@ makeFieldChart <- function(wd = getwd(),
   if (useRound == TRUE) {
     df["yCol"] <- round(df["yCol"], digit = 3)
   } 
-  
+
   if (xType == "datetime") {
     df["xCol"] <- as.Date(paste0(df[["xCol"]], 1), "%Y%m%d")
   }
@@ -241,6 +245,7 @@ makeFieldChart <- function(wd = getwd(),
   # each series Chart ----
   dxChart <- highcharter::highchart() %>%
     highcharter::hc_chart(zoomType = "x", plotBorderWidth = 1, animation = if (base64) FALSE) %>%
+    highcharter::hc_legend(enabled = useLegend, itemStyle = list(fontSize = legendFontSize)) %>%
     highcharter::hc_yAxis_multiples(
       list(
         title = list(text = yLeftText, align = 'high'),
@@ -271,13 +276,14 @@ makeFieldChart <- function(wd = getwd(),
         dashStyle = "shortdot"
       ),
       labels = list(
-        format = ifelse(xType == "datetime", "{value:%b}", "{value}")
+        format = ifelse(xType == "datetime", "{value:%b}", "{value}"),
+        style = list(fontSize = xAxisLabelsSize)
       )
     ) %>%
     highcharter::hc_plotOptions(
       series = list(
         dataLabels = list(
-          allowOverlap = TRUE,
+          allowOverlap = dataLabelsOverlap,
           format = "{point.yCol:.2f}",
           style = list(fontWeight = datalabelFontWeight, textOutline = datalabelOutline)
         ),
