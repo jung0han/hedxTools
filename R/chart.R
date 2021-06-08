@@ -560,7 +560,7 @@ checkSignal <- function(df, target, type, yCol = "value", xCol = "PURC_MON_NEW",
       dplyr::filter(xCol == df$xCol[1])
     if (is.na(target$yCol)) {
       return(FALSE)
-    } else if (df$yCol[1] > target$yCol * percent / 100) {
+    } else if (2 - (df$yCol[1] / target$yCol) < percent / 100) {
       return(TRUE)
     } else {
       return(FALSE)
