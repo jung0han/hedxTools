@@ -112,7 +112,7 @@ makeFieldChart <- function(wd = getwd(),
                            imageHeight = 400,
                            imageWidth = 640,
                            base64 = TRUE,
-                           clickSeries,
+                           clickSeries = NULL,
                            deleteTmp = TRUE) {
 
   # Main function------------------------------------------
