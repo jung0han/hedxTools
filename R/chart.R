@@ -400,7 +400,7 @@ makeFieldChart <- function(wd = getwd(),
         color = label_df[label_df$label_text == group, ][["group_colors"]],
         yAxis = label_df[label_df$label_text == group, ][["yAxis"]],
         type = "line",
-        event = list(click = clickSeries)
+        events = list(click = clickSeries)
       )
 
     if (!is.na(barCol)) {
