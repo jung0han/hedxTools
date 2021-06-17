@@ -112,6 +112,7 @@ makeFieldChart <- function(wd = getwd(),
                            imageHeight = 400,
                            imageWidth = 640,
                            base64 = TRUE,
+                           clickSeries,
                            deleteTmp = TRUE) {
 
   # Main function------------------------------------------
@@ -398,7 +399,8 @@ makeFieldChart <- function(wd = getwd(),
         label = list(enabled = useLinelabels, style = list(fontWeight = "nomal")),
         color = label_df[label_df$label_text == group, ][["group_colors"]],
         yAxis = label_df[label_df$label_text == group, ][["yAxis"]],
-        type = "line"
+        type = "line",
+        event = list(click = clickSeries)
       )
 
     if (!is.na(barCol)) {
