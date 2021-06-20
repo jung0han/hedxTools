@@ -289,7 +289,8 @@ makeFieldChart <- function(wd = getwd(),
           style = list(fontWeight = datalabelFontWeight, textOutline = datalabelOutline)
         ),
         lineWidth = lineWidth,
-        animation = if (base64) FALSE
+        animation = if (base64) FALSE,
+        cursor = 'pointer'
       )
     ) %>%
     # dataLabels 전역 설정
@@ -562,7 +563,7 @@ checkSignal <- function(df, target, type, yCol = "value", xCol = "PURC_MON_NEW",
       dplyr::filter(xCol == df$xCol[1])
     if (is.na(target$yCol)) {
       return(FALSE)
-    } else if (2 - (df$yCol[1] / target$yCol) < percent / 100) {
+    } else if (sum(2, -(df$yCol[1] / target$yCol[1]), na.rm = TRUE) < (percent / 100)) {
       return(TRUE)
     } else {
       return(FALSE)
