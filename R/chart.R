@@ -90,6 +90,7 @@ makeFieldChart <- function(wd = getwd(),
                            dataLabelsOverlap = TRUE,
                            yRightUse = TRUE,
                            labelLocation = "left",
+                           leftLabelGrid = 20,
                            useLeftlabels = TRUE,
                            useLinelabels = FALSE,
                            useWeeklabels = TRUE,
@@ -138,7 +139,6 @@ makeFieldChart <- function(wd = getwd(),
     unique_group <- sort(unique(df$group))
   } else {
     unique_group <- datalabelsOrder
-    print("test")
   }
 
 
@@ -169,6 +169,7 @@ makeFieldChart <- function(wd = getwd(),
   label_y <- c()
   label_x <- c()
   label_text <- c()
+  label_loc <- (c(1:leftLabelGrid) - 0.5) * y_max / leftLabelGrid
 
   for (group_name in unique_group) {
     group_name <- as.character(group_name)
@@ -184,10 +185,10 @@ makeFieldChart <- function(wd = getwd(),
       label_y <- c(label_y, rev(value_y$yCol)[1])
     } else {
       label_x <- c(label_x, ifelse(xType == "datetime", highcharter::datetime_to_timestamp(value_x$xCol[1]), value_x$xCol[1]))
-      label_y <- c(label_y, value_y$yCol[1])
+      label_y <- c(label_y, label_loc[which.min(abs(label_loc - value_y$yCol[1]))])
+      label_loc <- label_loc[label_loc != label_y[length(label_y)]]
     }
   }
-  print(label_x)
 
   if (!useCustomize) {
     yAxis <- 0
@@ -203,10 +204,8 @@ makeFieldChart <- function(wd = getwd(),
   }
   group_colors <- c()
   group_colors[1:length(unique_group)] <- "#A6A6A6"
-  print(length(group_colors) - length(groupColors))
   group_colors_index <- length(group_colors) - length(groupColors) + 1
   group_colors[group_colors_index:length(group_colors)] <- groupColors
-  print(group_colors)
 
   label_df <- data.frame(
     label_text,
@@ -220,9 +219,6 @@ makeFieldChart <- function(wd = getwd(),
     lineSymbols,
     lineSymbolColors
   ) %>% dplyr::filter(!is.na(label_y))
-
-  # label_df <- label_df[!is.na(label_df$label_y),]
-  print(label_df)
 
   label <- list()
   # 옵션값을 가지고 라인 좌측 라벨 구조 생성
@@ -523,7 +519,6 @@ checkWeekSignal <- function(last = 1, this = 1) {
   } else {
     signal <- "red"
   }
-  print(paste("Week signal :", signal))
   return(signal)
 }
 
