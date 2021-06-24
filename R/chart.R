@@ -162,7 +162,7 @@ makeFieldChart <- function(wd = getwd(),
   # x축의 가장 마지막 좌표를 주해줌
   top_label_x <- ifelse(
     xType == "datetime",
-    highcharter::datetime_to_timestamp(df[["xCol"]][length(df[["xCol"]])]),
+    highcharter::datetime_to_timestamp(sort(df$xCol)[length(df$xCol)]),
     length(unique(df$xCol))
   )
 
@@ -324,11 +324,11 @@ makeFieldChart <- function(wd = getwd(),
     dxChart <- dxChart %>% highcharter::hc_add_annotation(
       labelOptions = list(
         y = ifelse(labelLocation == "right", -10, 0),
-        x = ifelse(labelLocation == "right", -10, -70),
+        x = ifelse(labelLocation == "right", -10, -13),
         verticalAlign = "middle",
         allowOverlap = TRUE,
         overflow = 'none',
-        align = "left",
+        align = "right",
         padding = 1,
         style = list(fontFamily = fontFamily, fontWeight = linelabelFontWeight, fontSize = linelabelFontSize),
         backgroundColor = ""
