@@ -324,7 +324,7 @@ makeFieldChart <- function(wd = getwd(),
     dxChart <- dxChart %>% highcharter::hc_add_annotation(
       labelOptions = list(
         y = ifelse(labelLocation == "right", -10, 0),
-        x = ifelse(labelLocation == "right", -10, -60),
+        x = ifelse(labelLocation == "right", -10, -70),
         verticalAlign = "middle",
         allowOverlap = TRUE,
         overflow = 'none',
