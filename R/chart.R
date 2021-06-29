@@ -152,7 +152,6 @@ makeFieldChart <- function(wd = getwd(),
   # 금주, 지난주 날짜와 실적을 dataframe으로 만들고 desc를 기준으로 group을 나눠줌
   ffr_week <- data.frame(weeklabelDate, weeklabelValue)
 
-
   # 금주, 지난주 실적을 기준으로 signal을 구해줌
   ffr_signal <- hedxTools::checkWeekSignal(
     ffr_week[1, "weeklabelValue"],
@@ -188,11 +187,13 @@ makeFieldChart <- function(wd = getwd(),
   }
   
   label_loc <- (c(1:leftLabelGrid) - 0.5) * y_max / leftLabelGrid
-  label_y <- sort(label_y)
+  label_y <- sort(label_y, na.last = TRUE)
   
   for(index in 1:length(label_y)) {
-    label_y[index] <- label_loc[which.min(abs(label_loc - label_y[index]))]
-    label_loc <- label_loc[label_loc != label_y[index]]
+    if(!is.na(label_y[index])) {
+      label_y[index] <- label_loc[which.min(abs(label_loc - label_y[index]))]
+      label_loc <- label_loc[label_loc != label_y[index]]
+    }
   }
   
   label_y <- label_y[unique_group]
@@ -413,7 +414,7 @@ makeFieldChart <- function(wd = getwd(),
           name = paste(group, addName[2]),
           yAxis = 1,
           highcharter::hcaes(x = xCol, y = barCol),
-          color = label_df[label_df$label_text == group, ][["group_colors"]],
+          color = label_df[group, ][["group_colors"]],
           type = "column"
         )
     }
