@@ -144,6 +144,7 @@ makeFieldChart <- function(wd = getwd(),
 
   # y축 최대값을 정하기 위해 NA를 제외한 value의 최대값을 구하고 1.4를 곱함
   y_max <- ifelse(yMax, yMax, max(df$yCol[!is.na(df$yCol)]) * 1.4)
+  if(y_max == 0) y_max <- 10
 
   y2_max <- ifelse(y2Max, y2Max, y_max)
 
@@ -185,7 +186,6 @@ makeFieldChart <- function(wd = getwd(),
       label_y[group_name] <- value_y$yCol[1]
     }
   }
-  
   label_loc <- (c(1:leftLabelGrid) - 0.5) * y_max / leftLabelGrid
   label_y <- sort(label_y, na.last = TRUE)
   
