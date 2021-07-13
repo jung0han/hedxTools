@@ -96,6 +96,7 @@ makeFieldChart <- function(wd = getwd(),
                            useWeeklabels = TRUE,
                            useLegend = TRUE,
                            useRound = TRUE,
+                           useExport = FALSE,
                            titleSignal = "green", #
                            fontFamily = "LG스마트체2.0 Light",
                            titleText = "Global OLED (Product)",
@@ -324,7 +325,7 @@ makeFieldChart <- function(wd = getwd(),
       style = list(fontFamily = fontFamily, fontWeight = titleFontWeight, useHTML = TRUE, fontSize = titleFontSize)
     ) %>%
     hc_exporting(
-      enabled = TRUE,
+      enabled = useExport,
       buttons = list(contextButton = list(menuItems = list("viewFullscreen", "separator", "downloadPNG", "downloadPDF", "downloadCSV"))),
       filename = paste0(titleText, "_", Sys.Date())
     )
