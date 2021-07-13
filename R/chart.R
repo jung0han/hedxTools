@@ -293,13 +293,17 @@ makeFieldChart <- function(wd = getwd(),
         ),
         lineWidth = lineWidth,
         animation = if (base64) FALSE,
-        cursor = 'pointer'
+        cursor = 'pointer',
+        events = list(click = clickSeries)
       )
     ) %>%
     # dataLabels 전역 설정
     highcharter::hc_tooltip(
-      sort = TRUE,
-      table = TRUE
+      shared = TRUE,
+      useHTML = TRUE,
+      headerFormat = '<small>{point.key}</small><table>',
+      pointFormat = '<tr><td style="color: {series.color}">{series.name}: </td><td style="text-align: right"><b>{point.yCol:.2f}%</b></td></tr>',
+      footerFormat = '</table>'
     ) %>%
     highcharter::hc_title(
       text = paste0(
@@ -318,6 +322,11 @@ makeFieldChart <- function(wd = getwd(),
       ),
       margin = 10, align = "center",
       style = list(fontFamily = fontFamily, fontWeight = titleFontWeight, useHTML = TRUE, fontSize = titleFontSize)
+    ) %>%
+    hc_exporting(
+      enabled = TRUE,
+      buttons = list(contextButton = list(menuItems = list("viewFullscreen", "separator", "downloadPNG", "downloadPDF", "downloadCSV"))),
+      filename = paste0(titleText, "_", Sys.Date())
     )
 
 
@@ -404,7 +413,6 @@ makeFieldChart <- function(wd = getwd(),
         color = label_df[group, ]$group_colors,
         yAxis = label_df[group, ]$yAxis,
         type = "line",
-        events = list(click = clickSeries)
       )
 
     if (!is.na(barCol)) {
