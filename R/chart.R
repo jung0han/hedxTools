@@ -569,10 +569,8 @@ checkSignal <- function(df, target, type, yCol = "value", xCol = "PURC_MON_NEW",
   }
 
   compare_target <- function(df, target, percent) {
-    target <- target %>%
-      dplyr::rename(yCol = yCol, xCol = xCol, group = groupCol) %>%
-      dplyr::filter(xCol == df$xCol[1])
-    if (is.na(target$yCol)) {
+    target <- target %>% rename(yCol = yCol, xCol = xCol, group = groupCol) %>% filter(xCol == df$xCol[1])
+    if (anyNA(target$yCol)) {
       return(FALSE)
     } else if (sum(2, -(df$yCol[1] / target$yCol[1]), na.rm = TRUE) < (percent / 100)) {
       return(TRUE)
