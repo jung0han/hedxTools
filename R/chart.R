@@ -190,7 +190,7 @@ makeFieldChart <- function(wd = getwd(),
   label_loc <- (c(1:leftLabelGrid) - 0.5) * y_max / leftLabelGrid
   label_y <- sort(label_y, na.last = TRUE)
   
-  for(index in 1:length(label_y)) {
+  for(index in seq_len(length(label_y))) {
     if(!is.na(label_y[index])) {
       label_y[index] <- label_loc[which.min(abs(label_loc - label_y[index]))]
       label_loc <- label_loc[label_loc != label_y[index]]
@@ -212,7 +212,7 @@ makeFieldChart <- function(wd = getwd(),
     label_x <- ifelse(xType == "datetime", highcharter::datetime_to_timestamp(df[["xCol"]][1]), 1)
   }
   group_colors <- c()
-  group_colors[1:length(unique_group)] <- "#A6A6A6"
+  group_colors[seq_len(length(unique_group))] <- "#A6A6A6"
   group_colors_index <- length(group_colors) - length(groupColors) + 1
   group_colors[group_colors_index:length(group_colors)] <- groupColors
 
@@ -324,7 +324,7 @@ makeFieldChart <- function(wd = getwd(),
       margin = 10, align = "center",
       style = list(fontFamily = fontFamily, fontWeight = titleFontWeight, useHTML = TRUE, fontSize = titleFontSize)
     ) %>%
-    hc_exporting(
+    highcharter::hc_exporting(
       enabled = useExport,
       buttons = list(contextButton = list(menuItems = list("viewFullscreen", "separator", "downloadPNG", "downloadPDF", "downloadCSV"))),
       filename = paste0(titleText, "_", Sys.Date())
