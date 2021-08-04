@@ -66,7 +66,7 @@ makeFieldChart <- function(wd = getwd(),
                            barCol = NA,
                            groupCol = "group",
                            xType = "datetime",
-                           xLeftMargin = 0.15,
+                           xLeftMargin = -1,
                            yMax = FALSE,
                            y2Max = FALSE,
                            yLeftText = "FFR(%)",
@@ -271,9 +271,9 @@ makeFieldChart <- function(wd = getwd(),
       )
     ) %>%
     highcharter::hc_xAxis(
-      minPadding = xLeftMargin,
+      min = xLeftMargin,
       type = xType,
-      showFirstLabel = ifelse(xType == "datetime", FALSE, TRUE),
+      showFirstLabel = FALSE,
       tickInterval = tickIntervalX,
       crosshair = list(
         width = 1,
