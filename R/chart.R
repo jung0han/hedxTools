@@ -275,7 +275,7 @@ makeFieldChart <- function(wd = getwd(),
       minPadding = xLeftMargin,
       min = ifelse(xType == "category", xMin, NA),
       type = xType,
-      showFirstLabel = FALSE,
+      showFirstLabel = ifelse(xMin < 0, FALSE, TRUE),
       tickInterval = tickIntervalX,
       crosshair = list(
         width = 1,
