@@ -303,10 +303,7 @@ makeFieldChart <- function(wd = getwd(),
     # dataLabels 전역 설정
     highcharter::hc_tooltip(
       shared = TRUE,
-      useHTML = TRUE,
-      headerFormat = '<small>{point.key}</small><table>',
-      pointFormat = '<tr><td style="color: {series.color}">{series.name}: </td><td style="text-align: right"><b>{point.yCol:.2f}%</b></td></tr>',
-      footerFormat = '</table>'
+      useHTML = TRUE
     ) %>%
     highcharter::hc_title(
       text = paste0(
@@ -331,7 +328,14 @@ makeFieldChart <- function(wd = getwd(),
       buttons = list(contextButton = list(menuItems = list("viewFullscreen", "separator", "downloadPNG", "downloadPDF", "downloadCSV"))),
       filename = paste0(titleText, "_", Sys.Date())
     )
-
+  
+  if (is.na(barCol)) {
+    dxChart <- dxChart %>% highcharter::hc_tooltip(
+      headerFormat = '<small>{point.key}</small><table>',
+      pointFormat = '<tr><td style="color: {series.color}">{series.name}: </td><td style="text-align: right"><b>{point.yCol:.2f}%</b></td></tr>',
+      footerFormat = '</table>'
+    )
+  }
 
   if (useLeftlabels) {
     dxChart <- dxChart %>% highcharter::hc_add_annotation(
