@@ -230,6 +230,7 @@ makeFieldChart <- function(wd = getwd(),
   ) %>% dplyr::filter(!is.na(label_y))
 
   label <- list()
+
   # 옵션값을 가지고 라인 좌측 라벨 구조 생성
   for (group in rownames(label_df)) {
     label[[length(label) + 1]] <- list(
@@ -296,7 +297,7 @@ makeFieldChart <- function(wd = getwd(),
         ),
         lineWidth = lineWidth,
         animation = if (base64) FALSE,
-        cursor = 'pointer',
+        cursor = if(!is.null(clickSeries)) 'pointer',
         events = list(click = clickSeries)
       )
     ) %>%
