@@ -304,7 +304,8 @@ makeFieldChart <- function(wd = getwd(),
     # dataLabels 전역 설정
     highcharter::hc_tooltip(
       shared = TRUE,
-      useHTML = TRUE
+      useHTML = TRUE,
+      hideDelay = 0
     ) %>%
     highcharter::hc_title(
       text = paste0(
