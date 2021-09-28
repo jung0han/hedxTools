@@ -407,7 +407,7 @@ makeFieldChart <- function(wd = getwd(),
         name = paste(group, addName[1]),
         highcharter::hcaes(x = xCol, y = yCol),
         marker = list(
-          enabled = ifelse(lineSymbols, TRUE, FALSE),
+          enabled = ifelse(label_df[group, ]$lineSymbols, TRUE, FALSE),
           states = list(hover = list(enabled = markerHover)),
           symbol = label_df[group, ]$lineSymbols,
           fillColor = label_df[group, ]$lineSymbolColors,
