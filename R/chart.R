@@ -566,12 +566,13 @@ checkSignal <- function(df, target, type, yCol = "value", xCol = "PURC_MON_NEW",
 
   compare_continuity <- function(df, times) {
     df <- df$yCol
+    result <- TRUE
     if (length(df) < times + 1) {
       message("비교할 대상이 ", times, "주기 보다 짧습니다.")
-    }
-    result <- TRUE
-    for (index in 1:times) {
-      result <- result && df[index] > df[index + 1]
+    } else {
+      for (index in 1:times) {
+        result <- result && df[index] > df[index + 1]
+      }
     }
     return(result)
   }
