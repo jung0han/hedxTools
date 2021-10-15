@@ -87,7 +87,7 @@ makeFieldChart <- function(wd = getwd(),
                            markerHover = TRUE,
                            groupColors = c("#000000", "#008000", "#FF0000", "#7F7F7F", "#FF00FF", "#FFC000"),
                            useDatalabels = c(TRUE, TRUE, TRUE, FALSE, TRUE, TRUE),
-                           datalabelsOrder = c("'20(R)", "'21(T)", "'21(R)", "L3M('20)", "L3M", "L6M"),
+                           datalabelsOrder = NULL,
                            dataLabelsOverlap = TRUE,
                            yRightUse = TRUE,
                            labelLocation = "left",
@@ -137,10 +137,10 @@ makeFieldChart <- function(wd = getwd(),
   # group별로 df를 분리 해주고 정렬
   df_group <- split(df, df$group)
 
-  if ((length(unique(df$group)) != length(unique(datalabelsOrder)) || !all(datalabelsOrder %in% unique(df$group)))) {
+  if (is.null(datalabelsOrder)) {
     unique_group <- sort(unique(df$group))
   } else {
-    unique_group <- datalabelsOrder
+    unique_group <- sort(unique(df$group))[c(1,3,2,5,4,6)]
   }
 
 
