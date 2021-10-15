@@ -567,8 +567,8 @@ checkSignal <- function(df, target, type, yCol = "value", xCol = "PURC_MON_NEW",
   compare_continuity <- function(df, times) {
     df <- df$yCol
     result <- TRUE
-    if (length(df) < times + 1) {
-      message("비교할 대상이 ", times, "주기 보다 짧습니다.")
+    if (length(df) < times + 1 || length(df) <= 2) {
+      result <- FALSE
     } else {
       for (index in 1:times) {
         result <- result && df[index] > df[index + 1]
@@ -578,6 +578,7 @@ checkSignal <- function(df, target, type, yCol = "value", xCol = "PURC_MON_NEW",
   }
 
   compare_target <- function(df, target, percent) {
+    
     target <- target %>% dplyr::rename(yCol = yCol, xCol = xCol, group = groupCol) %>% filter(xCol == df$xCol[1])
     if (anyNA(target$yCol)) {
       return(FALSE)
