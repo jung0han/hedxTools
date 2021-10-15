@@ -137,10 +137,14 @@ makeFieldChart <- function(wd = getwd(),
   # group별로 df를 분리 해주고 정렬
   df_group <- split(df, df$group)
 
-  if (is.null(datalabelsOrder)) {
-    unique_group <- sort(unique(df$group))
-  } else {
+  if (length(unique(df$group)) == 6) {
     unique_group <- sort(unique(df$group))[c(1,3,2,5,4,6)]
+  } else {
+    if (is.null(datalabelsOrder)) {
+      unique_group <- sort(unique(df$group))
+    } else {
+      unique_group <- datalabelsOrder
+    }
   }
 
 
