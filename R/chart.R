@@ -194,7 +194,6 @@ makeFieldChart <- function(wd = getwd(),
   }
   label_loc <- (c(1:leftLabelGrid) - 0.5) * y_max / leftLabelGrid
   label_y <- sort(label_y, na.last = TRUE)
-  
   for(index in seq_len(length(label_y))) {
     if(!is.na(label_y[index])) {
       label_y[index] <- label_loc[which.min(abs(label_loc - label_y[index]))]
@@ -317,11 +316,11 @@ makeFieldChart <- function(wd = getwd(),
         titleSignal,
         ";'>",
         if (titleSignal == "black") {
-          "○ "
+          "&#9675; "
         } else if (titleSignal == "white") {
           ""
         } else {
-          "● "
+          "&#9679; "
         },
         "</span>",
         titleText
@@ -338,7 +337,7 @@ makeFieldChart <- function(wd = getwd(),
   if (is.na(barCol)) {
     dxChart <- dxChart %>% highcharter::hc_tooltip(
       headerFormat = '<small>{point.key}</small><table>',
-      pointFormat = '<tr><td style="color: {series.color}">{series.name}: </td><td style="text-align: right"><b>{point.yCol:.2f}%</b></td></tr>',
+      pointFormat = "<tr><td style='color: {series.color}'>{series.name}: </td><td style='text-align: right'><b>{point.yCol:.2f}%</b></td></tr>",
       footerFormat = '</table>'
     )
   }
