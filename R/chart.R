@@ -316,11 +316,11 @@ makeFieldChart <- function(wd = getwd(),
         titleSignal,
         ";'>",
         if (titleSignal == "black") {
-          "&#9675; "
+          "○ "
         } else if (titleSignal == "white") {
           ""
         } else {
-          "&#9679; "
+          "● "
         },
         "</span>",
         titleText
