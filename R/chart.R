@@ -440,7 +440,7 @@ makeFieldChart <- function(wd = getwd(),
     }
   }
   if (base64 == TRUE) {
-    hash <- hashids::encode(as.integer(Sys.time()), hashids::hashid_settings(titleText))
+    hash <- hashids::encode(as.numeric(Sys.time())*1000, hashids::hashid_settings(titleText))
     if (!dir.exists(paste0("tmp_", hash))) {
       dir.create(paste0("tmp_", hash))
     }
