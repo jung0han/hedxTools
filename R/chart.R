@@ -83,7 +83,9 @@ makeFieldChart <- function(wd = getwd(),
                            weeklabelDate = c("(3/4)", "(3/11)"),
                            weeklabelValue = c(1.06, 1.04),
                            lineSymbols = c("circle", "circle", "circle", "diamond", "diamond", "square"),
+                           lineSymbolRadius = 4,
                            lineSymbolColors = c("white", "white", "", "", "", "white"),
+                           lineDashStyles = "Solid",
                            markerHover = TRUE,
                            groupColors = c("#000000", "#008000", "#FF0000", "#7F7F7F", "#FF00FF", "#FFC000"),
                            useDatalabels = c(TRUE, TRUE, TRUE, FALSE, TRUE, TRUE),
@@ -128,7 +130,7 @@ makeFieldChart <- function(wd = getwd(),
   # x 좌표는 소수점 둘째자리로 반올림, y좌표는 datetime으로 변경
   if (useRound == TRUE) {
     df["yCol"] <- round(df["yCol"], digit = 3)
-  } 
+  }
 
   if (xType == "datetime") {
     df["xCol"] <- as.Date(paste0(df[["xCol"]], 1), "%Y%m%d")
@@ -200,7 +202,7 @@ makeFieldChart <- function(wd = getwd(),
       label_loc <- label_loc[label_loc != label_y[index]]
     }
   }
-  
+
   label_y <- label_y[unique_group]
 
   if (!useCustomize) {
@@ -229,7 +231,9 @@ makeFieldChart <- function(wd = getwd(),
     group_colors,
     useDatalabels,
     lineSymbols,
-    lineSymbolColors
+    lineSymbolColors,
+    lineSymbolRadius,
+    lineDashStyles
   ) %>% dplyr::filter(!is.na(label_y))
 
   label <- list()
@@ -333,7 +337,7 @@ makeFieldChart <- function(wd = getwd(),
       buttons = list(contextButton = list(menuItems = list("viewFullscreen", "separator", "downloadPNG", "downloadPDF", "downloadCSV"))),
       filename = paste0(titleText, "_", Sys.Date())
     )
-  
+
   if (is.na(barCol)) {
     dxChart <- dxChart %>% highcharter::hc_tooltip(
       headerFormat = '<small>{point.key}</small><table>',
@@ -415,7 +419,8 @@ makeFieldChart <- function(wd = getwd(),
           symbol = label_df[group, ]$lineSymbols,
           fillColor = label_df[group, ]$lineSymbolColors,
           lineWidth = 1,
-          lineColor = NULL
+          lineColor = NULL,
+          radius = label_df[group, ]$lineSymbolRadius
         ),
         dataLabels = list(
           enabled = label_df[group, ]$useDatalabels,
@@ -424,6 +429,7 @@ makeFieldChart <- function(wd = getwd(),
         label = list(enabled = useLinelabels, style = list(fontWeight = "nomal")),
         color = label_df[group, ]$group_colors,
         yAxis = label_df[group, ]$yAxis,
+        dashStyle = label_df[group, ]$lineDashStyles,
         type = "line",
       )
 
@@ -581,7 +587,7 @@ checkSignal <- function(df, target, type, yCol = "value", xCol = "PURC_MON_NEW",
   }
 
   compare_target <- function(df, target, percent) {
-    
+
     target <- target %>% dplyr::rename(yCol = yCol, xCol = xCol, group = groupCol) %>% filter(xCol == df$xCol[1])
     if (anyNA(target$yCol)) {
       return(FALSE)
